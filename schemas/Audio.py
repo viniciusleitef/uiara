@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
 class AudioSchema(BaseModel):
-    filename: str
-    date_time: str
-    process_number: str
-    politician: str
+    title: str
+    url: str
+    classification: bool
+    accuracy: float
 
     class Config:
         orm_mode = True
