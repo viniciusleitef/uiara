@@ -27,8 +27,9 @@ class Process(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     status_id: Mapped[int] = mapped_column(Integer, ForeignKey("status.id"), nullable=False)
+    num_process: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     responsible: Mapped[str] = mapped_column(String, nullable=False)
-    date_of_creation: Mapped[str] = mapped_column(String, default="Agora")
+    date_of_creation: Mapped[str] = mapped_column(String)
 
     status = relationship("Status", back_populates="process")
     audio = relationship("Audio", back_populates="process")

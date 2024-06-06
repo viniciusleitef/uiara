@@ -1,7 +1,11 @@
 from models.models import Status
 from sqlalchemy.orm import Session
+from schemas.Status import StatusSchema
 
-def create_status(db:Session):
+def get_all_status_db(db: Session):
+    return db.query(Status).all()
+
+def create_status_db(db:Session):
     new_status = Status(
         description = "Em análise"
     )
@@ -10,3 +14,12 @@ def create_status(db:Session):
     db.commit()
 
     return new_status.id
+
+def update_status_db(status_id: int, status: StatusSchema, db: Session):
+    updated_status = db.query(Status).filter(Status.id == status_id).first()
+    if updated_status:
+        updated_status.description = status.description
+        db.commit()
+        db.refresh(updated_status)
+        return updated_status
+    return None

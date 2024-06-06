@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 
-class AudioSchema(BaseModel):
-    title: str
-    url: str
+class StatusSchema(BaseModel):
+    description: str
 
     class Config:
         orm_mode = True
