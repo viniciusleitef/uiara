@@ -16,10 +16,10 @@ def get_audios_by_process_id_bd(process_id: int, db:Session):
 def get_audio_by_url_bd(url:str, db:Session):
     return db.query(Audio).filter(Audio.url == url).first()
 
-async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, db: Session):
+async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, filePath, db: Session):
  
-    create_process_dir(process_id)
-    await create_audio_file(file, process_id)
+    create_process_dir(process_id, filePath)
+    await create_audio_file(file, process_id, filePath)
 
     # Cria um novo registro no banco de dados com os dados do arquivo de áudio
     new_audio = Audio(
@@ -44,8 +44,8 @@ def update_audio_db(audio_id, classification:bool, accuracy:float, db:Session):
     return None
 
 # Cria um diretorio "Process_x" na pasta "audios" de acordo com o process_id
-def create_process_dir(process_id):
-    pasta_process = f"audios/Process_{process_id}"
+def create_process_dir(process_id, filePath):
+    pasta_process = f"{filePath}/Process_{process_id}"
     try:
         os.makedirs(pasta_process, exist_ok=True)
         print(f"Pasta '{pasta_process}' criada com sucesso!")
@@ -53,8 +53,8 @@ def create_process_dir(process_id):
         print(f"Ocorreu um erro ao criar a pasta: {e}")
 
 # Cria um arquivo de audio no diretorio "Process_x" de acordo com process_id
-async def create_audio_file(file, process_id):
-    file_location = f"audios/Process_{process_id}/{file.filename}"
+async def create_audio_file(file, process_id,filePath):
+    file_location = f"{filePath}/Process_{process_id}/{file.filename}"
     try:
         async with aiofiles.open(file_location, 'wb') as out_file:
             content = await file.read()

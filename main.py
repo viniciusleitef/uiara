@@ -23,6 +23,7 @@ async def root():
 @app.post("/upload-audio/")
 async def create_audio(file: UploadFile ,title: str = Form(...), url: str = Form(...), num_process: str = Form(...), responsible: str = Form(...), date_of_creation: str = Form(...)):
     Validation.is_wave(file)
+    baseFilePath = "/home/chaos/Documentos/detectai/audios"
 
     # Criando objeto AudioSchema e ProcessSchema
     audio_data = AudioSchema(
@@ -49,16 +50,16 @@ async def create_audio(file: UploadFile ,title: str = Form(...), url: str = Form
     if process == None:
         status_id = create_status_db(db)
         process_id = create_process(process_data, status_id, db)
-        await create_audio_db(file, audio_data, process_id, db)
+        await create_audio_db(file, audio_data, process_id, baseFilePath, db)
 
     else:
         # Verificando se o arquivo já existe no diretorio - verificação feita nesse else pois caso seja o cadastro do primeiro processo não conseguiriamos pegar o "process.id"
         Validation.has_audiofile(file.filename, process.id)
-        await create_audio_db(file, audio_data, process.id, db)
+        await create_audio_db(file, audio_data, process.id, baseFilePath, db)
     
     # Pegando o processo novamente para usar process.id no filePath
     process = get_process_by_numprocess_db(process_data.num_process, db)
-    filePath = f"audios/Process_{process.id}"
+    filePath = f"{baseFilePath}/Process_{process.id}"
 
     # Execudando o modelo e passando o resuldado para listas de acuracia e clase predita
     prediction_list, predicted_class_list = await analyzingAudio(filePath)
