@@ -10,13 +10,13 @@ def get_audio_db(db: Session):
     audios = db.query(Audio).all()
     return {"audios": audios}
 
-def get_audios_by_process_id_bd(process_id: int, db:Session):
+def get_audios_by_process_id_bd(process_id:int, db:Session):
     return db.query(Audio).filter(Audio.process_id == process_id).all()
 
 def get_audio_by_url_bd(url:str, db:Session):
     return db.query(Audio).filter(Audio.url == url).first()
 
-async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, filePath, db: Session):
+async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, filePath, audioFilePath, db: Session):
  
     create_process_dir(process_id, filePath)
     await create_audio_file(file, process_id, filePath)
@@ -25,7 +25,7 @@ async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, f
     new_audio = Audio(
         process_id=process_id,
         title=audio.title,
-        url=audio.url
+        url=audioFilePath
         )
     
     db.add(new_audio)

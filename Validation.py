@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import UploadFile, HTTPException
 from controller.audioController import get_audio_by_url_bd
+from controller.processController import get_process_by_numprocess_db
 import os
 
 class Validation():
@@ -17,7 +18,11 @@ class Validation():
         if os.path.isfile(file_path):
             raise HTTPException(status_code=400, detail="File already exists")
         
-    
     def is_wave(file:UploadFile):
         if not file.filename.endswith(('.wav')):
             raise HTTPException(status_code=400, detail="Invalid file type")
+        
+    def has_process(numprocess:str, db):
+        process = get_process_by_numprocess_db(numprocess, db)
+        if not process:
+            raise HTTPException(status_code=400, detail="Process does not exist")
