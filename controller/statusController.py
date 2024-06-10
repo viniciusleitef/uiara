@@ -15,10 +15,10 @@ def create_status_db(db:Session):
 
     return new_status.id
 
-def update_status_db(status_id: int, status: StatusSchema, db: Session):
+def update_status_db(status_id: int, status: str, db: Session):
     updated_status = db.query(Status).filter(Status.id == status_id).first()
     if updated_status:
-        updated_status.description = status.description
+        updated_status.description = status
         db.commit()
         db.refresh(updated_status)
         return updated_status
