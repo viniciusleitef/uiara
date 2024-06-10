@@ -20,7 +20,7 @@ app = FastAPI()
 async def root():
     return {"message": "Hello world!"}
 
-@app.post("/upload-audio/")
+@app.post("/processo")
 async def create_audio(file: UploadFile ,title: str = Form(...), url: str = Form(...), num_process: str = Form(...), responsible: str = Form(...), date_of_creation: str = Form(...)):
     Validation.is_wave(file)
     baseFilePath = "/home/chaos/Documentos/detectai/audios"
