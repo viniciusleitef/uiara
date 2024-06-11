@@ -11,11 +11,22 @@ from schemas.Status import StatusSchema
 from trained_model.executaModelo import analyzingAudio
 from Validation import Validation
 from datetime import date
+from fastapi.middleware.cors import CORSMiddleware
 
 Base.metadata.create_all(bind=engine) 
 db = SessionLocal()
 
+
 app = FastAPI()
+
+origins = ['*', 'http://localhost:8000']
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 async def root():
