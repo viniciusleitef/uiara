@@ -5,6 +5,8 @@ import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { ProcessoPayload } from "../../app/services/processos/types";
+import processoService from "../../app/services/processos";
 
 export const Upload = () => {
   const [progress, setProgress] = useState(0);
@@ -31,8 +33,26 @@ export const Upload = () => {
       } else {
         clearInterval(interval);
         setProgress(100);
+        uploadFile(file);
       }
-    }, 50);
+    }, 10);
+  };
+
+  const uploadFile = async (file: File) => {
+    try {
+      const formData: ProcessoPayload = {
+        file,
+        title: "teste",
+        num_process: "1",
+        responsible: "1",
+        date_of_creation: "1",
+      };
+
+      const response = await processoService.postProcesso(formData);
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
   };
 
   return (

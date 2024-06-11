@@ -2,13 +2,10 @@ import styled from "styled-components";
 import colors from "../../styles/colors";
 
 export const ModalContainer = styled.div`
-  position: fixed;
-  top: 55%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 `;
 
 export const ModalContent = styled.div`
@@ -21,12 +18,13 @@ export const ModalContent = styled.div`
 `;
 
 export const Title = styled.h1`
-  font-size: 40px;
+  font-size: 30px;
   color: ${colors.primary};
   font-weight: 700;
   display: flex;
   align-items: center;
   gap: 24px;
+  margin: 12px 0;
 
   img {
     width: 44px;
@@ -36,16 +34,16 @@ export const Title = styled.h1`
 `;
 
 export const Developer = styled.p`
-  font-size: 24px;
+  font-size: 16px;
   color: ${colors.primary};
   font-weight: 700;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 128px;
+  margin-top: 30px;
 
   img {
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
   }
 `;
