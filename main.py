@@ -16,7 +16,6 @@ from fastapi.middleware.cors import CORSMiddleware
 Base.metadata.create_all(bind=engine) 
 db = SessionLocal()
 
-
 app = FastAPI()
 
 origins = ['*', 'http://localhost:8000']
@@ -37,6 +36,7 @@ def get_audios_by_process_id(num_process):
     process = get_process_by_numprocess_db(num_process, db)
     Validation.has_process(num_process, db)
     return get_audios_by_process_id_bd(process.id, db)
+
 
 @app.get("/processo/{num_process}")
 def get_process_by_numprocess(num_process):
@@ -63,7 +63,7 @@ async def create_audio(file: UploadFile ,title: str = Form(...), num_process: st
     )
     
     # Pegando o processo pelo num_process
-    # Caso não exista, cria o status e o processo
+    # Caso não exista, cria o status, processo e o áudio
     # Caso exista, cria apenas o áudio
 
     process = get_process_by_numprocess_db(process_data.num_process, db)
@@ -82,28 +82,13 @@ async def create_audio(file: UploadFile ,title: str = Form(...), num_process: st
         Validation.has_audiofile(file.filename, process.id)
         await create_audio_db(file, audio_data, process.id, baseFilePath,audioFilePath, db)
     
-    # Pegando o processo novamente para usar process.id no filePath
+    # Pegando o processo novamente - Caso ele não tenha sido criado, estou garantindo agora que "process" não é none
     process = get_process_by_numprocess_db(process_data.num_process, db)
-    filePath = f"{baseFilePath}/Process_{process.id}"
 
     # Execudando o modelo e passando o resuldado para listas de acuracia e clase predita
-    prediction_list, predicted_class_list = await analyzingAudio(filePath)
+    prediction, predicted_class = await analyzingAudio(audioFilePath)
     
-    # Convertendo classe predita para o formato esperado pelo banco de dados
-    for i, predicted_class in enumerate(predicted_class_list):
-        if predicted_class.lower() == "fake":
-            predicted_class_list[i] = False
-        else:
-            predicted_class_list[i] = True
-    
-    # Pegando todos os áudios quem tenham o process.id iguais
-    list_of_audios = get_audios_by_process_id_bd(process.id, db)
-
-    # Para cada tabela audio em "list_of_audios"(todas tem o mesmo process_id) atualiza acuracia e classe predita
-    for i in range(len(list_of_audios)):
-        accuracy_value = prediction_list[i][0][0].item() # Pegando apenas a accuracy do array Numpy
-        update_audio_db(list_of_audios[i].id, predicted_class_list[i], accuracy_value, db)
+    # Atualizando accuracy e classification
+    update_audio_db(audioFilePath, prediction, predicted_class, db)
         
-
     return {"response":"success"}
-

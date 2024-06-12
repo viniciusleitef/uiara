@@ -33,15 +33,22 @@ async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, f
     
     return new_audio
     
-def update_audio_db(audio_id, classification:bool, accuracy:float, db:Session):
-    updated_audio = db.query(Audio).filter(Audio.id == audio_id).first()
+def update_audio_db(audioFilePath, prediction:float, predicted_class:bool, db:Session):
+    predicted_class = convert_to_bool(predicted_class)
+    prediction = float(prediction)
+    updated_audio = get_audio_by_url_bd(audioFilePath, db)
     if updated_audio:
-        updated_audio.classification = classification
-        updated_audio.accuracy = accuracy
+        updated_audio.classification = predicted_class
+        updated_audio.accuracy = prediction
         db.commit()
         db.refresh(updated_audio)
         return updated_audio
     return None
+
+def convert_to_bool(predicted_class):
+    if predicted_class.lower() == 'fake':
+        return False
+    return True
 
 # Cria um diretorio "Process_x" na pasta "audios" de acordo com o process_id
 def create_process_dir(process_id, filePath):
@@ -61,5 +68,3 @@ async def create_audio_file(file, process_id,filePath):
             await out_file.write(content)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
-
-    
