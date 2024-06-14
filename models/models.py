@@ -1,5 +1,5 @@
 from database import Base
-from sqlalchemy import String, Integer, Boolean, Float, DateTime, ForeignKey
+from sqlalchemy import String, Integer, Boolean, Float, Date, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 
@@ -29,7 +29,7 @@ class Process(Base):
     status_id: Mapped[int] = mapped_column(Integer, ForeignKey("status.id"), nullable=False)
     num_process: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     responsible: Mapped[str] = mapped_column(String, nullable=False)
-    date_of_creation: Mapped[str] = mapped_column(String)
+    date_of_creation: Mapped[str] = mapped_column(Date)
 
     status = relationship("Status", back_populates="process")
     audio = relationship("Audio", back_populates="process")

@@ -6,14 +6,25 @@ def get_all_status_db(db: Session):
     return db.query(Status).all()
 
 def create_status_db(db:Session):
-    new_status = Status(
+    status_analise = Status(
         description = "Em análise"
     )
 
-    db.add(new_status)
+    status_false = Status(
+        description = "Falso"
+    )
+
+    status_true = Status(
+        description = "Verdadeiro"
+    )
+
+    db.add(status_analise)
+    db.add(status_false)
+    db.add(status_true)
+    
     db.commit()
 
-    return new_status.id
+    return {"message": "status cadastrados"}
 
 def update_status_db(status_id: int, status: str, db: Session):
     updated_status = db.query(Status).filter(Status.id == status_id).first()

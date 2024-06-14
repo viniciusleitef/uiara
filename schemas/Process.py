@@ -8,4 +8,3 @@ class ProcessSchema(BaseModel):
 
     class Config:
         orm_mode = True
-

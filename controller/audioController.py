@@ -1,4 +1,5 @@
 from fastapi import UploadFile, HTTPException
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from models.models import Audio
 from schemas.Audio import AudioSchema
@@ -13,10 +14,15 @@ def get_audio_db(db: Session):
 def get_audios_by_process_id_bd(process_id:int, db:Session):
     return db.query(Audio).filter(Audio.process_id == process_id).all()
 
+async def get_audioFile(filePath: str):
+    if not os.path.exists(filePath):
+        raise HTTPException(status_code=404, detail="File not found")
+    return FileResponse(path=filePath, media_type='audio/wav', filename=os.path.basename(filePath))
+
 def get_audio_by_url_bd(url:str, db:Session):
     return db.query(Audio).filter(Audio.url == url).first()
 
-async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, filePath, audioFilePath, db: Session):
+async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, filePath:str, audioFilePath:str, db: Session):
  
     create_process_dir(process_id, filePath)
     await create_audio_file(file, process_id, filePath)
@@ -33,9 +39,10 @@ async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, f
     
     return new_audio
     
-def update_audio_db(audioFilePath, prediction:float, predicted_class:bool, db:Session):
+def update_audio_db(audioFilePath:str, prediction:float, predicted_class:bool, db:Session):
     predicted_class = convert_to_bool(predicted_class)
     prediction = float(prediction)
+    print(prediction, predicted_class)
     updated_audio = get_audio_by_url_bd(audioFilePath, db)
     if updated_audio:
         updated_audio.classification = predicted_class
@@ -45,13 +52,13 @@ def update_audio_db(audioFilePath, prediction:float, predicted_class:bool, db:Se
         return updated_audio
     return None
 
-def convert_to_bool(predicted_class):
+def convert_to_bool(predicted_class:bool):
     if predicted_class.lower() == 'fake':
         return False
     return True
 
 # Cria um diretorio "Process_x" na pasta "audios" de acordo com o process_id
-def create_process_dir(process_id, filePath):
+def create_process_dir(process_id:int, filePath:str):
     pasta_process = f"{filePath}/Process_{process_id}"
     try:
         os.makedirs(pasta_process, exist_ok=True)
@@ -60,7 +67,7 @@ def create_process_dir(process_id, filePath):
         print(f"Ocorreu um erro ao criar a pasta: {e}")
 
 # Cria um arquivo de audio no diretorio "Process_x" de acordo com process_id
-async def create_audio_file(file, process_id,filePath):
+async def create_audio_file(file:UploadFile, process_id:int, filePath:str):
     file_location = f"{filePath}/Process_{process_id}/{file.filename}"
     try:
         async with aiofiles.open(file_location, 'wb') as out_file:
