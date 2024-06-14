@@ -7,20 +7,24 @@ from schemas.Process import ProcessSchema
 import aiofiles
 import os
 
-def get_audio_db(db: Session):
+def get_audios_db(db: Session):
     audios = db.query(Audio).all()
     return {"audios": audios}
+
+def get_audio_by_id_db(audio_id:int, db:Session):
+    return db.query(Audio).filter(Audio.id == audio_id).first()
 
 def get_audios_by_process_id_bd(process_id:int, db:Session):
     return db.query(Audio).filter(Audio.process_id == process_id).all()
 
-async def get_audioFile(filePath: str):
-    if not os.path.exists(filePath):
-        raise HTTPException(status_code=404, detail="File not found")
-    return FileResponse(path=filePath, media_type='audio/wav', filename=os.path.basename(filePath))
 
 def get_audio_by_url_bd(url:str, db:Session):
     return db.query(Audio).filter(Audio.url == url).first()
+
+async def get_audioFile(audio_id: int, db:Session):
+    audio = get_audio_by_id_db(audio_id, db)
+    filePath = audio.url
+    return FileResponse(path=filePath, media_type='audio/wav', filename=os.path.basename(filePath))
 
 async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, filePath:str, audioFilePath:str, db: Session):
  

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Form
 from database import SessionLocal, Base, engine
 from fastapi import UploadFile
-from controller.audioController import create_audio_db, get_audios_by_process_id_bd, update_audio_db, get_audioFile
+from controller.audioController import create_audio_db, get_audios_by_process_id_bd, update_audio_db, get_audioFile, get_audio_by_id_db
 from controller.processController import create_process, get_process_by_numprocess_db, get_all_process_db, update_process_status, get_all_processes_with_audios_db
 from controller.statusController import create_status_db, update_status_db
 from models import models
@@ -45,11 +45,10 @@ def get_audios_by_process_id(num_process:str):
     Validation.has_process(num_process, db)
     return get_audios_by_process_id_bd(process.id, db)
 
-@app.get("/audioFile/{url}")
-async def get_audioFile_by_url(url:str):
-    decoded_url = unquote(url)
-    print(decoded_url)
-    return await get_audioFile(decoded_url)
+@app.get("/audioFile/{audio_id}")
+async def get_audioFile_by_url(audio_id:int):
+    Validation.has_audiofile(audio_id, db)
+    return await get_audioFile(audio_id, db)
 
 @app.get("/process/{num_process}")
 def get_process_by_numprocess(num_process):
@@ -95,7 +94,6 @@ async def create_audio(file: UploadFile ,title: str = Form(...), num_process: st
         # Verificando se o arquivo já existe no diretorio - verificação feita nesse else pois caso seja o cadastro do primeiro processo não conseguiriamos pegar o "process.id"
         audioFilePath = f"{BASE_FILE_PATH}/Process_{process.id}/{file.filename}"
         Validation.has_url(audioFilePath, db)
-        Validation.has_audiofile(file.filename, process.id)
         await create_audio_db(file, audio_data, process.id, BASE_FILE_PATH,audioFilePath, db)
     
     # Pegando o processo novamente - Caso ele não tenha sido criado, estou garantindo agora que "process" não é none
@@ -107,5 +105,5 @@ async def create_audio(file: UploadFile ,title: str = Form(...), num_process: st
     # Atualizando accuracy e classification
     update_audio_db(audioFilePath, prediction, predicted_class, db)
     update_process_status(process, db)
-        
+
     return {"response":"success"}

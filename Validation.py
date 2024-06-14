@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import UploadFile, HTTPException
-from controller.audioController import get_audio_by_url_bd
+from controller.audioController import get_audio_by_url_bd, get_audio_by_id_db
 from controller.processController import get_process_by_numprocess_db
 import os
 
@@ -11,12 +11,10 @@ class Validation():
         if audio:
             raise HTTPException(status_code=400, detail="Url already exists")
 
-    def has_audiofile(filename:str, process_id:int):
-        # Se existir um arquivo com o nome = "filename" no diretorio, return true
-        directory = f"audios/Process_{process_id}"
-        file_path = os.path.join(directory, filename)
-        if os.path.isfile(file_path):
-            raise HTTPException(status_code=400, detail="File already exists")
+    def has_audiofile(audio_id:int, db:Session):
+        audio = get_audio_by_id_db(audio_id, db)
+        if not audio:
+            raise HTTPException(status_code=400, detail="Audio does not exist")
         
     def is_wave(file:UploadFile):
         if not file.filename.endswith(('.wav')):
