@@ -2,9 +2,9 @@ import { api } from "..";
 import { ProcessoPayload } from "./types";
 
 class ProcessoService {
-  async postProcesso(formData: ProcessoPayload) {
+  async postProcess(formData: ProcessoPayload) {
     try {
-      const response = await api.post("/processo", formData, {
+      const response = await api.post("/process", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
