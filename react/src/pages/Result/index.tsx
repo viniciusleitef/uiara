@@ -26,25 +26,27 @@ export const Result = () => {
   };
 
   return (
-    <div>
+    <>
       <BackPage />
-      <p>Número do Processo: #{numProcess}</p>
-      {audios.map((audio, index) => (
-        <ResultAudio key={index}>
-          <div className="audio">
-            <AudioFile />
-            <span>{extractFileName(audio.url)}</span>
-          </div>
-          <div
-            className={`classification ${
-              audio.classification ? "true" : "false"
-            }`}
-          >
-            {audio.classification ? "Verdadeiro" : "Falso"}
-          </div>
-          <div className="accuracy">{(audio.accuracy * 100).toFixed(2)}%</div>
-        </ResultAudio>
-      ))}
-    </div>
+      <div>
+        <p>Número do Processo: #{numProcess}</p>
+        {audios.map((audio, index) => (
+          <ResultAudio key={index}>
+            <div className="audio">
+              <AudioFile />
+              <span>{extractFileName(audio.url)}</span>
+            </div>
+            <div
+              className={`classification ${
+                audio.classification ? "true" : "false"
+              }`}
+            >
+              {audio.classification ? "Verdadeiro" : "Falso"}
+            </div>
+            <div className="accuracy">{(audio.accuracy * 100).toFixed(2)}%</div>
+          </ResultAudio>
+        ))}
+      </div>
+    </>
   );
 };

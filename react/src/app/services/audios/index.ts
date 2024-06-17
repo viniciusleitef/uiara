@@ -9,6 +9,15 @@ class AudioService {
       throw error;
     }
   }
+
+  async getAllAudios() {
+    try {
+      const response = await api.get("/processesWithAudios");
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const audioService = new AudioService();
