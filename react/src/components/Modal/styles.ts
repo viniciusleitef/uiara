@@ -6,7 +6,6 @@ export const ModalContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 40px;
 `;
 
 export const ModalContent = styled.div`

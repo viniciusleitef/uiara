@@ -12,10 +12,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ProcessoPayload } from "../../app/services/processos/types";
-import processoService from "../../app/services/processos";
+import { ProcessPayload } from "../../app/services/process/types";
+import processService from "../../app/services/process";
 import AudioFileIcon from "@mui/icons-material/AudioFile";
 import { InputAdornment, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -23,6 +24,8 @@ export const Upload = () => {
   const [processNumber, setProcessNumber] = useState("");
   const [responsible, setResponsible] = useState("");
   const [title, setTitle] = useState("");
+
+  const navigate = useNavigate();
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -42,14 +45,14 @@ export const Upload = () => {
 
     for (let i = 0; i < files.length; i++) {
       try {
-        const formData: ProcessoPayload = {
+        const formData: ProcessPayload = {
           file: files[i],
           title: "Análise de Áudio",
           num_process: processNumber,
           responsible,
           date_of_creation: currentDate,
         };
-        await processoService.postProcess(formData);
+        await processService.postProcess(formData);
         setTotalProgress((prevProgress) => prevProgress + 100 / files.length);
       } catch (error) {
         console.error("Error uploading file:", error);
@@ -57,6 +60,7 @@ export const Upload = () => {
     }
     setFiles([]);
     setTotalProgress(0);
+    navigate(`/result/${processNumber}`);
   };
 
   return (
