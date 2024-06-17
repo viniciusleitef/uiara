@@ -10,16 +10,39 @@ export const UploadContainer = styled.div`
   align-items: center;
   font-size: 20px;
   font-weight: 700;
+  padding-top: 8px;
 
   p {
-    color: ${colors.primary});  
+    color: ${colors.primary};
   }
 
   .upload {
+    margin-top: -20px;
     display: flex;
     align-items: center;
     justify-content: space-around;
     width: 100%;
+  }
+`;
+
+export const LoadedAudioContainer = styled.div`
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+  margin-bottom: 20px;
+  padding-right: 4px;
+`;
+
+export const LoadedAudio = styled.div`
+  background-color: #eee;
+  display: flex;
+  align-items: center;
+  padding: 10px 0 10px 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+
+  p {
+    margin-left: 10px;
   }
 `;
 

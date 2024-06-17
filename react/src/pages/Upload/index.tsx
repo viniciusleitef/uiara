@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { ButtonFooter, UploadContainer } from "./styles";
+import {
+  ButtonFooter,
+  LoadedAudio,
+  LoadedAudioContainer,
+  UploadContainer,
+} from "./styles";
 import UploadIcon from "@mui/icons-material/Upload";
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
@@ -9,10 +14,15 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ProcessoPayload } from "../../app/services/processos/types";
 import processoService from "../../app/services/processos";
+import AudioFileIcon from "@mui/icons-material/AudioFile";
+import { InputAdornment, TextField } from "@mui/material";
 
 export const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [totalProgress, setTotalProgress] = useState(0);
+  const [processNumber, setProcessNumber] = useState("");
+  const [responsible, setResponsible] = useState("");
+  const [title, setTitle] = useState("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
@@ -23,25 +33,18 @@ export const Upload = () => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
-  const generateProcessNumber = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
-
   const getCurrentDate = () => {
     return new Date().toISOString().split("T")[0];
   };
 
   const uploadAllFiles = async () => {
     const currentDate = getCurrentDate();
-    const processNumber = generateProcessNumber();
-    const title = "Análise de Áudio";
-    const responsible = "João Silva";
 
     for (let i = 0; i < files.length; i++) {
       try {
         const formData: ProcessoPayload = {
           file: files[i],
-          title,
+          title: "Análise de Áudio",
           num_process: processNumber,
           responsible,
           date_of_creation: currentDate,
@@ -58,9 +61,36 @@ export const Upload = () => {
 
   return (
     <UploadContainer>
-      <Typography variant="body2" style={{ marginTop: 20 }}>
-        Número de processo: #{generateProcessNumber()}
-      </Typography>
+      <Box display="flex" flexDirection="column" gap={2} marginBottom={2}>
+        <Box display="flex" gap={2}>
+          <TextField
+            label="Número do Processo"
+            variant="outlined"
+            fullWidth
+            value={processNumber}
+            onChange={(e) => setProcessNumber(e.target.value)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">#</InputAdornment>
+              ),
+            }}
+          />
+          <TextField
+            label="Responsável"
+            variant="outlined"
+            fullWidth
+            value={responsible}
+            onChange={(e) => setResponsible(e.target.value)}
+          />
+        </Box>
+        <TextField
+          label="Título"
+          variant="outlined"
+          fullWidth
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </Box>
 
       <div className="upload">
         <p>Insira o áudio para análise</p>
@@ -83,16 +113,24 @@ export const Upload = () => {
         </label>
       </div>
 
-      {files.map((file, index) => (
-        <Box display="flex" alignItems="center" width="100%" mt={2} key={index}>
-          <Typography variant="body2" style={{ flexGrow: 1, marginRight: 20 }}>
-            {file.name}
-          </Typography>
-          <IconButton onClick={() => removeFile(index)} aria-label="delete">
-            <DeleteIcon />
-          </IconButton>
-        </Box>
-      ))}
+      {files.length > 0 && (
+        <LoadedAudioContainer>
+          {files.map((file, index) => (
+            <LoadedAudio>
+              <AudioFileIcon />
+              <Typography
+                variant="body2"
+                style={{ flexGrow: 1, marginRight: 20 }}
+              >
+                {file.name}
+              </Typography>
+              <IconButton onClick={() => removeFile(index)} aria-label="delete">
+                <DeleteIcon />
+              </IconButton>
+            </LoadedAudio>
+          ))}
+        </LoadedAudioContainer>
+      )}
 
       {totalProgress > 0 && (
         <>
@@ -105,14 +143,16 @@ export const Upload = () => {
       )}
 
       <ButtonFooter>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={uploadAllFiles}
-          disabled={!files.length}
-        >
-          Enviar Processos
-        </Button>
+        <ButtonFooter>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={uploadAllFiles}
+            disabled={!files.length || !processNumber || !responsible || !title}
+          >
+            Enviar Processos
+          </Button>
+        </ButtonFooter>
       </ButtonFooter>
     </UploadContainer>
   );

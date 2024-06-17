@@ -6,6 +6,7 @@ export const ModalContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-top: 40px;
 `;
 
 export const ModalContent = styled.div`
@@ -13,6 +14,7 @@ export const ModalContent = styled.div`
   border-radius: 8px;
   box-shadow: 0 70px 100px rgba(0, 0, 0, 0.1);
   min-height: 310px;
+  max-height: 500px;
   min-width: 450px;
   padding: 20px;
 `;
@@ -40,7 +42,7 @@ export const Developer = styled.p`
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 30px;
+  margin-top: 40px;
 
   img {
     width: 48px;
