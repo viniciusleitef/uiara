@@ -5,7 +5,7 @@ export const ResultAudio = styled.div`
   background-color: #eee;
   display: flex;
   align-items: center;
-  padding: 15px;
+  padding: 10px 15px;
   margin: 10px 0px;
   border-radius: 6px;
   justify-content: space-between;
@@ -41,8 +41,8 @@ export const ResultAudio = styled.div`
   }
 
   .accuracy {
-    height: 60px;
-    width: 60px;
+    height: 50px;
+    width: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;

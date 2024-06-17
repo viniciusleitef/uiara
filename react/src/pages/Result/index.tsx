@@ -4,6 +4,7 @@ import audiosService from "../../app/services/audios";
 import { AudioProps } from "../../types";
 import { ResultAudio } from "./styles";
 import { AudioFile } from "@mui/icons-material";
+import { BackPage } from "../../components/BackPage";
 
 export const Result = () => {
   const { numProcess } = useParams();
@@ -26,6 +27,7 @@ export const Result = () => {
 
   return (
     <div>
+      <BackPage />
       <p>Número do Processo: #{numProcess}</p>
       {audios.map((audio, index) => (
         <ResultAudio key={index}>
