@@ -1,7 +1,7 @@
-import { BrowserRouter } from "react-router-dom";
-import { Header } from "./components/Header";
-import { Routes } from "./app/router";
 import { Modal } from "./components/Modal";
+import { BrowserRouter } from "react-router-dom";
+import { Routes } from "./app/router";
+import { Header } from "./components/Header";
 
 function App() {
   return (

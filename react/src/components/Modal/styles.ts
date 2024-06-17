@@ -6,17 +6,16 @@ export const ModalContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin-top: 40px;
 `;
 
 export const ModalContent = styled.div`
   background-color: ${colors.white};
   border-radius: 8px;
   box-shadow: 0 70px 100px rgba(0, 0, 0, 0.1);
-  min-height: 310px;
-  max-height: 500px;
-  min-width: 450px;
+  height: 350px;
+  width: 550px;
   padding: 20px;
+  overflow-y: auto;
 `;
 
 export const Title = styled.h1`

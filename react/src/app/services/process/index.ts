@@ -1,8 +1,8 @@
 import { api } from "..";
-import { ProcessoPayload } from "./types";
+import { ProcessPayload } from "./types";
 
-class ProcessoService {
-  async postProcess(formData: ProcessoPayload) {
+class ProcessService {
+  async postProcess(formData: ProcessPayload) {
     try {
       const response = await api.post("/process", formData, {
         headers: {
@@ -16,5 +16,5 @@ class ProcessoService {
   }
 }
 
-const processoService = new ProcessoService();
-export default processoService;
+const processService = new ProcessService();
+export default processService;
