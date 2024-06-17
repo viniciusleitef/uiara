@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { BrowserRouter } from "react-router-dom";
+import { Header } from "./components/Header";
+import { Routes } from "./app/router";
 import { Modal } from "./components/Modal";
-import { Upload } from "./pages/Upload";
 
 function App() {
-  const [step] = useState("Upload");
-  return <Modal>{step === "Upload" && <Upload></Upload>}</Modal>;
+  return (
+    <BrowserRouter>
+      <Header />
+      <Modal>
+        <Routes />
+      </Modal>
+    </BrowserRouter>
+  );
 }
 
 export default App;
