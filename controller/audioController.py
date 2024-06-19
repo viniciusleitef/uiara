@@ -15,7 +15,18 @@ def get_audio_by_id_db(audio_id:int, db:Session):
     return db.query(Audio).filter(Audio.id == audio_id).first()
 
 def get_audios_by_process_id_bd(process_id:int, db:Session):
-    return db.query(Audio).filter(Audio.process_id == process_id).all()
+    audios = db.query(Audio).filter(Audio.process_id == process_id).all()
+    audioList = []
+
+    # Retornando audios sem "url"
+    for audio in audios:
+        audioList.append({
+            "id": audio.id,
+            "title": audio.title,
+            "classification": audio.classification,
+            "accuracy": audio.accuracy
+        })
+    return audioList
 
 
 def get_audio_by_url_bd(url:str, db:Session):
