@@ -23,9 +23,9 @@ def get_all_processes_with_audios_db(db: Session):
 
 def verify_status(audioList):   
     for audio in audioList:
-        if audio.classification == False:
+        if audio['classification']  == False:
             return 2                        # Falso
-        if audio.classification == None:
+        if audio['classification']  == None:
             return 1                        # Em análise
     return 3                                # Verdadeiro
 
