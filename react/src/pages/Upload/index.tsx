@@ -38,12 +38,8 @@ export const Upload = () => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
-  const getCurrentDate = () => {
-    return new Date().toISOString().split("T")[0];
-  };
-
   const uploadAllFiles = async () => {
-    const currentDate = getCurrentDate();
+    const currentDate = new Date().toISOString();
 
     for (let i = 0; i < files.length; i++) {
       try {

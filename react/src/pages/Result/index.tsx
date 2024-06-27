@@ -21,10 +21,6 @@ export const Result = () => {
     fetchAudios();
   }, [numProcess]);
 
-  const extractFileName = (url: string) => {
-    return url.split("/").pop();
-  };
-
   return (
     <>
       <BackPage />
@@ -34,7 +30,7 @@ export const Result = () => {
           <ResultAudio key={index}>
             <div className="audio">
               <AudioFile />
-              <span>{extractFileName(audio.url)}</span>
+              <span>{audio.title}</span>
             </div>
             <div
               className={`classification ${

@@ -20,10 +20,6 @@ export const AllResults = () => {
     }
   };
 
-  const extractFileName = (url: string) => {
-    return url.split("/").pop();
-  };
-
   return (
     <ResultsContainer>
       {processes.map((process) => (
@@ -39,7 +35,7 @@ export const AllResults = () => {
             <Audio key={audio.id}>
               <div className="audio">
                 <AudioFile />
-                <span>{extractFileName(audio.url)}</span>
+                <span>{audio.title}</span>
               </div>
               <div
                 className={`classification ${
