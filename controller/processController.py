@@ -17,7 +17,7 @@ def get_all_processes_with_audios_db(db: Session):
     for process in processes:
         process_dict = process.__dict__
         audios = get_audios_by_process_id_bd(process.id, db)
-        process_dict['audios'] = [audio.__dict__ for audio in audios]
+        process_dict['audios'] = audios  # Já são dicionários
         response.append(process_dict)
     return response
 
