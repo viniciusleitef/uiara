@@ -16,7 +16,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { ProcessPayload } from "../../app/services/process/types";
 import processService from "../../app/services/process";
 import AudioFileIcon from "@mui/icons-material/AudioFile";
-import { InputAdornment, TextField } from "@mui/material";
+import { CircularProgress, InputAdornment, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { BackPage } from "../../components/BackPage";
 
@@ -26,6 +26,8 @@ export const Upload = () => {
   const [processNumber, setProcessNumber] = useState("");
   const [responsible, setResponsible] = useState("");
   const [title, setTitle] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -39,26 +41,52 @@ export const Upload = () => {
   };
 
   const uploadAllFiles = async () => {
-    const currentDate = new Date().toISOString();
+    if (!files.length || !processNumber || !responsible || !title) {
+      setErrorMessage(
+        "Todos os campos devem ser preenchidos e deve haver pelo menos um arquivo para enviar."
+      );
+      return;
+    }
 
-    for (let i = 0; i < files.length; i++) {
+    setIsUploading(true);
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().slice(0, 10);
+    const uploadPromise = files.map(async (file) => {
       try {
         const formData: ProcessPayload = {
-          file: files[i],
-          title: "Análise de Áudio",
+          file: file,
+          title,
           num_process: processNumber,
           responsible,
-          date_of_creation: currentDate,
+          date_of_creation: formattedDate,
         };
         await processService.postProcess(formData);
         setTotalProgress((prevProgress) => prevProgress + 100 / files.length);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error uploading file:", error);
+        if (error instanceof Error) {
+          setErrorMessage("Erro ao enviar arquivo: " + error.message);
+        } else {
+          setErrorMessage("Erro ao enviar arquivo: Erro desconhecido");
+        }
+        throw error;
       }
+    });
+
+    const delay = new Promise((resolve) => setTimeout(resolve, 3000));
+
+    try {
+      await Promise.all([...uploadPromise, delay]);
+      navigate(`/result/${processNumber}`);
+      setFiles([]);
+      setTotalProgress(0);
+      setErrorMessage("");
+    } catch {
+      setIsUploading(false);
+      setErrorMessage("Erro ao enviar todos os arquivos");
+    } finally {
+      setIsUploading(false);
     }
-    setFiles([]);
-    setTotalProgress(0);
-    navigate(`/result/${processNumber}`);
   };
 
   return (
@@ -72,7 +100,12 @@ export const Upload = () => {
               variant="outlined"
               fullWidth
               value={processNumber}
-              onChange={(e) => setProcessNumber(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^\d*$/.test(value)) {
+                  setProcessNumber(value);
+                }
+              }}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">#</InputAdornment>
@@ -111,11 +144,23 @@ export const Upload = () => {
               variant="contained"
               component="span"
               startIcon={<UploadIcon />}
+              disabled={isUploading}
             >
               Upload
             </Button>
           </label>
+          {isUploading && (
+            <Box mt={2} display="flex" justifyContent="center">
+              <CircularProgress />
+            </Box>
+          )}
         </div>
+
+        {errorMessage && (
+          <Typography variant="body2" color="error">
+            {errorMessage}
+          </Typography>
+        )}
 
         {files.length > 0 && (
           <LoadedAudioContainer>
