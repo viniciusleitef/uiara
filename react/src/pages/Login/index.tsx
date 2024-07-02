@@ -1,5 +1,10 @@
 import React, { useState, useContext } from "react";
+import { LoginContainer } from "./styles";
+import Person from "@mui/icons-material/Person";
+import VpnKey from "@mui/icons-material/VpnKey";
 import { AuthContext } from "../../app/context/AuthContext";
+import { StyledInput } from "../../styles/input";
+import LoginIcon from "@mui/icons-material/Login";
 
 export const Login = () => {
   const { signIn } = useContext(AuthContext);
@@ -18,30 +23,34 @@ export const Login = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    <LoginContainer>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Email</label>
-          <input
+          <Person />
+          <StyledInput
             type="email"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
         <div>
-          <label>Password</label>
-          <input
+          <VpnKey />
+          <StyledInput
             type="password"
+            placeholder="Senha"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Login</button>
+        {error && <p>{error}</p>}
+        <button type="submit">
+          <LoginIcon />
+          Entrar
+        </button>
       </form>
-    </div>
+    </LoginContainer>
   );
 };
