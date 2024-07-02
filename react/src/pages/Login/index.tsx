@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { LoginContainer } from "./styles";
 import Person from "@mui/icons-material/Person";
 import VpnKey from "@mui/icons-material/VpnKey";
@@ -7,10 +8,17 @@ import { StyledInput } from "../../styles/input";
 import LoginIcon from "@mui/icons-material/Login";
 
 export const Login = () => {
-  const { signIn } = useContext(AuthContext);
+  const { user, signIn } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
