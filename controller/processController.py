@@ -1,7 +1,10 @@
+from fastapi import HTTPException
 from models.models import Process
 from sqlalchemy.orm import Session
 from schemas.Process import ProcessSchema
-from controller.audioController import get_audios_by_process_id_bd
+from controller.audioController import get_audios_by_process_id_bd, delete_audios_bd
+import shutil
+import os
 
 def get_process_by_process_id(process_id, db):
     return db.query(Process).filter(Process.id == process_id).first()
@@ -62,3 +65,37 @@ def create_process(process:ProcessSchema, status_id:int, db:Session):
     db.commit()
     
     return new_process.id
+
+async def delete_process_by_numprocess(num_process:str, base_filepath:str, db:Session):
+    # Pegando process para pegar o id
+    process = get_process_by_numprocess_db(num_process, db)
+
+    await delete_process_dir(process.id, base_filepath)
+    delete_audios_bd(process.id, db)
+    delete_process_bd(process.id, db)
+    return f"Process {num_process} and associated audios deleted successfully"
+
+async def delete_process_dir(process_id:int, base_filepath:str):
+    target_folder =  f"{base_filepath}/Process_{process_id}"
+    try:
+        if os.path.exists(target_folder):
+            shutil.rmtree(target_folder)  # Exclui a pasta e todo o seu conteúdo
+            print(f"Pasta '{target_folder}' excluída com sucesso!")
+        else:
+            print(f"Pasta '{target_folder}' não encontrada.")
+    except Exception as e:
+        print(f"Ocorreu um erro ao excluir a pasta: {e}")
+        raise HTTPException(status_code=500, detail=f"An error occurred while deleting the directory: {str(e)}")
+
+def delete_process_bd(process_id, db):
+    try:
+        process = db.query(Process).filter(Process.id == process_id).first()
+        if process:
+            db.delete(process)
+            db.commit()
+            print(f"Processo '{process_id}' excluído com sucesso!")
+        else:
+            print(f"Processo '{process_id}' não encontrado.")
+    except Exception as e:
+        print(f"Ocorreu um erro ao excluir o processo: {e}")
+        raise HTTPException(status_code=500, detail=f"An error occurred while deleting the process: {str(e)}")

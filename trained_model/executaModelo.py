@@ -12,7 +12,7 @@ def extract_features(filepath):
 
 async def analyzingAudio(filePath):
    # Carregar o modelo treinado
-    model_path = 'trained_model/audio_classification_model.h5'
+    model_path = 'trained_model/audio_classification_model_3.0-1.h5'
     model = load_model(model_path)
 
     # Extrair características MFCC do arquivo de áudio
@@ -28,5 +28,5 @@ async def analyzingAudio(filePath):
     predicted_class = "Real" if prediction <= 0.5 else "Fake"
     
     # Imprimir o resultado
-    print(f"Arquivo: {filePath}, Predicao: {prediction}, Classe predita: {predicted_class}")
+    print(f"Predicao: {prediction}, Classe predita: {predicted_class}")
     return prediction[0][0], predicted_class

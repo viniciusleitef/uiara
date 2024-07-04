@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Form
 from database import SessionLocal, Base, engine
 from fastapi import UploadFile
-from controller.audioController import create_audio_db, get_audios_by_process_id_bd, update_audio_db, get_audioFile, get_audio_by_id_db
-from controller.processController import create_process, get_process_by_numprocess_db, get_all_process_db, update_process_status, get_all_processes_with_audios_db
+from controller.audioController import create_audio_db, get_audios_by_process_id_bd, update_audio_db, get_audioFile, get_audio_duration
+from controller.processController import create_process, get_process_by_numprocess_db, get_all_process_db, update_process_status, get_all_processes_with_audios_db, delete_process_by_numprocess
 from controller.statusController import create_status_db, update_status_db
 from models import models
 from schemas.Audio import AudioSchema
@@ -39,6 +39,8 @@ def create_status():
 async def root():
     return {"message": "Hello world!"}
 
+### Audios ####
+
 @app.get("/audios/{num_process}")
 def get_audios_by_process_id(num_process:str):
     process = get_process_by_numprocess_db(num_process, db)
@@ -49,6 +51,8 @@ def get_audios_by_process_id(num_process:str):
 async def get_audioFile_by_url(audio_id:int):
     Validation.has_audiofile(audio_id, db)
     return await get_audioFile(audio_id, db)
+
+### Process ####
 
 @app.get("/process/{num_process}")
 def get_process_by_numprocess(num_process):
@@ -107,3 +111,8 @@ async def create_audio(file: UploadFile ,title: str = Form(...), num_process: st
     update_process_status(process, db)
 
     return {"response":"success"}
+
+@app.delete("/process/{num_process}")
+async def delete_process(num_process:str):
+    Validation.has_process(num_process, db)
+    return await delete_process_by_numprocess(num_process, BASE_FILE_PATH, db)

@@ -19,6 +19,8 @@ class Audio(Base):
     url: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     classification: Mapped[bool] = mapped_column(Boolean, nullable=True)
     accuracy: Mapped[float] = mapped_column(Float, nullable=True)
+    audio_duration: Mapped[float] = mapped_column(Float, nullable=False, unique=False)
+    sample_rate: Mapped[float] = mapped_column(Float, nullable=False, unique=False)
 
     process = relationship("Process", back_populates="audio")
 
