@@ -2,15 +2,19 @@ import React, { useState } from "react";
 import { Container } from "./styles";
 import { StyledInput } from "../../styles/input";
 import { StyledTextarea } from "../../styles/textarea";
+import { useNavigate } from "react-router-dom";
 
 export const Support = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Lógica para enviar o e-mail aqui
-    console.log("Email enviado:", email, message);
+    alert("Email enviado com sucesso!");
+    navigate("/");
   };
 
   return (
