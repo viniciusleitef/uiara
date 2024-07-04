@@ -64,10 +64,9 @@ export const AllResults = () => {
                     {audio.classification ? "Verdadeiro" : "Falso"}
                   </div>
                   <div className="accuracy">
-                    {(
-                      (audio.classification
-                        ? 1 - audio.accuracy
-                        : audio.accuracy) * 100
+                    {(audio.classification
+                      ? 1 - audio.accuracy
+                      : audio.accuracy
                     ).toFixed(2)}
                     %
                   </div>
