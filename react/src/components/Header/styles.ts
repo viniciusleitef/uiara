@@ -3,14 +3,14 @@ import colors from "../../styles/colors";
 
 export const HeaderContainer = styled.header`
   width: 100%;
-  height: 85px;
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px;
 `;
 
 export const BlueHeader = styled.div`
   background-color: ${colors.primary};
-  height: 35px;
+  height: 15px;
 `;
 
 export const WhiteHeader = styled.div`
