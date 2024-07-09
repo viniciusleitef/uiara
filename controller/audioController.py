@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from models.models import Audio
 from schemas.Audio import AudioSchema
 from pydub import AudioSegment
-from io import BytesIO
+from config import BASE_FILE_PATH
 import numpy as np
 import io
 import os
@@ -42,17 +42,19 @@ async def get_audioFile(audio_id: int, db:Session):
     filePath = audio.url
     return FileResponse(path=filePath, media_type='audio/wav', filename=os.path.basename(filePath))
 
-async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, filePath:str, audioFilePath:str, db: Session):
- 
-    create_process_dir(process_id, filePath)
-    await create_audio_file(file, process_id, filePath)
+async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, db: Session):
+    from Validation import Validation
+    file_location = f"{BASE_FILE_PATH}/Process_{process_id}/{file.filename}"
+    Validation.has_url(file_location, db)
+    await create_audio_file(file, file_location )
+
     audio_duration = await get_audio_duration(file)
     sample_rate = await get_sample_rate(file)
 
     new_audio = Audio(
         process_id=process_id,
         title=audio.title,
-        url=audioFilePath,
+        url=file_location,
         audio_duration=audio_duration,
         sample_rate=sample_rate
         )
@@ -85,23 +87,13 @@ def convert_acuracy(acuracy:float):
         return round((1 - acuracy) * 100, 2)
     return 50.00
 
-#MOVER create_process_dir() PARA processController.py
-# Cria um diretorio "Process_x" na pasta "audios" de acordo com o process_id
-def create_process_dir(process_id:int, filePath:str):
-    pasta_process = f"{filePath}/Process_{process_id}"
-    try:
-        os.makedirs(pasta_process, exist_ok=True)
-        print(f"Pasta '{pasta_process}' criada com sucesso!")
-    except Exception as e:
-        print(f"Ocorreu um erro ao criar a pasta: {e}")
-
 # Cria um arquivo de audio no diretorio "Process_x" de acordo com process_id
-async def create_audio_file(file:UploadFile, process_id:int, filePath:str):
-    file_location = f"{filePath}/Process_{process_id}/{file.filename}"
+async def create_audio_file(file:UploadFile, file_location:str):
     try:
         async with aiofiles.open(file_location, 'wb') as out_file:
             content = await file.read()
             await out_file.write(content)
+        return file_location    
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
     

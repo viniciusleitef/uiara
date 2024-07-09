@@ -1,6 +1,5 @@
 from models.models import Status
 from sqlalchemy.orm import Session
-from schemas.Status import StatusSchema
 
 def get_all_status_db(db: Session):
     return db.query(Status).all()

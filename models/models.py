@@ -13,7 +13,7 @@ class Status(Base):
 class Audio(Base):
     __tablename__ = 'audio'
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     process_id: Mapped[int] = mapped_column(Integer, ForeignKey("process.id"), nullable=False)
     title: Mapped[str] = mapped_column(String, nullable=False)
     url: Mapped[str] = mapped_column(String, nullable=False, unique=True)
@@ -27,7 +27,7 @@ class Audio(Base):
 class Process(Base):
     __tablename__ = 'process'
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     status_id: Mapped[int] = mapped_column(Integer, ForeignKey("status.id"), nullable=False)
     num_process: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     responsible: Mapped[str] = mapped_column(String, nullable=False)
@@ -35,3 +35,11 @@ class Process(Base):
 
     status = relationship("Status", back_populates="process")
     audio = relationship("Audio", back_populates="process")
+
+class Users(Base):
+    __tablename__ = 'users'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    username: Mapped[str] = mapped_column(String, nullable=False, unique=False)
+    email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    password: Mapped[str] = mapped_column(String, nullable=False, unique=False)
