@@ -3,6 +3,8 @@ export interface AudioProps {
   classification: boolean;
   id: number;
   accuracy: number;
+  audio_duration: number;
+  sample_rate: number;
 }
 
 export interface ProcessProps {
@@ -12,4 +14,15 @@ export interface ProcessProps {
   id: number;
   responsible: string;
   audios: AudioProps[];
+}
+
+export interface AudioFileProps {
+  id: number;
+  url: string;
+  filename: string;
+  contentType: string;
+  contentLength: number;
+  dateCreated: string;
+  lastModified: string;
+  server: string;
 }

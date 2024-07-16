@@ -5,6 +5,7 @@ import { Audio, ResultsContainer } from "./styles";
 import { AudioFile } from "@mui/icons-material";
 import { BackPage } from "../../components/BackPage";
 import CircularProgress from "@mui/material/CircularProgress";
+import { formatDuration } from "../../utils/formatDuration";
 
 export const AllResults = () => {
   const [processes, setProcesses] = useState<ProcessProps[]>([]);
@@ -54,7 +55,10 @@ export const AllResults = () => {
                 <Audio key={audio.id}>
                   <div className="audio">
                     <AudioFile />
-                    <span>{audio.title}</span>
+                    <div className="audio-info">
+                      <span>{audio.title}</span>
+                      <p>Duração {formatDuration(audio.audio_duration)}</p>
+                    </div>
                   </div>
                   <div
                     className={`classification ${
