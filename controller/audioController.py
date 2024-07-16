@@ -4,11 +4,14 @@ from sqlalchemy.orm import Session
 from models.models import Audio
 from schemas.Audio import AudioSchema
 from pydub import AudioSegment
-from config import BASE_FILE_PATH
+import noisereduce as nr
 import numpy as np
+import aiofiles
+import librosa
 import io
 import os
-import aiofiles
+
+from config import BASE_FILE_PATH
 
 def get_audios_db(db: Session):
     audios = db.query(Audio).all()
@@ -29,10 +32,10 @@ def get_audios_by_process_id_bd(process_id:int, db:Session):
             "classification": audio.classification,
             "accuracy": audio.accuracy,
             "audio_duration": audio.audio_duration,
-            "sample_rate": audio.sample_rate
+            "sample_rate": audio.sample_rate,
+            "snr": audio.snr
         })
     return audioList
-
 
 def get_audio_by_url_bd(url:str, db:Session):
     return db.query(Audio).filter(Audio.url == url).first()
@@ -50,13 +53,15 @@ async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, d
 
     audio_duration = await get_audio_duration(file)
     sample_rate = await get_sample_rate(file)
+    snr = await calculate_snr(file_location)
 
     new_audio = Audio(
         process_id=process_id,
         title=audio.title,
         url=file_location,
         audio_duration=audio_duration,
-        sample_rate=sample_rate
+        sample_rate=sample_rate,
+        snr = snr
         )
     
     db.add(new_audio)
@@ -123,12 +128,36 @@ async def get_audio_duration(audio_file: UploadFile):
     
     return duration_in_seconds
 
-async def get_sample_rate(file: UploadFile) -> int:
+async def get_sample_rate(file: UploadFile):
     # Converta o UploadFile para bytes e carregue o arquivo de áudio
     audio = AudioSegment.from_file(file.file, format="wav")
     # Pegue a taxa de amostragem
     sample_rate = audio.frame_rate
     return sample_rate
+
+async def calculate_snr(file_path: str):
+    # Função para calcular a potência do sinal
+    def signal_power(signal):
+        return np.mean(signal ** 2)
+
+    # Função para calcular o SNR
+    def calculate_snr(signal, noise):
+        pow_signal = signal_power(signal)
+        pow_noise = signal_power(noise)
+        return 10 * np.log10(pow_signal / pow_noise)
+
+    # Carregar o áudio
+    signal, sr = librosa.load(file_path, sr=None)
+
+    # Estimar o ruído usando noisereduce
+    noise_estimation = nr.reduce_noise(y=signal, sr=sr)
+
+    # Calcular a SNR
+    snr = calculate_snr(signal, noise_estimation)
+    snr_rounded = round(snr, 2)
+    return snr_rounded
+
+
 
 def delete_audios_bd(process_id:int, db:Session):
     try:

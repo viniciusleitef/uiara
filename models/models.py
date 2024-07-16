@@ -21,6 +21,7 @@ class Audio(Base):
     accuracy: Mapped[float] = mapped_column(Float, nullable=True)
     audio_duration: Mapped[float] = mapped_column(Float, nullable=False, unique=False)
     sample_rate: Mapped[float] = mapped_column(Float, nullable=False, unique=False)
+    snr: Mapped[float] = mapped_column(Float, nullable=False, unique= False)
 
     process = relationship("Process", back_populates="audio")
 
