@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from models.models import Process
 from sqlalchemy.orm import Session
 from schemas.Process import ProcessSchema
+from sqlalchemy.orm import desc
 from controller.audioController import get_audios_by_process_id_bd, delete_audios_bd, create_audio_db, update_audio_db
 from trained_model.executaModelo import analyzingAudio
 import shutil
@@ -14,7 +15,7 @@ def get_process_by_process_id(process_id, db):
 
 def get_all_process_db(db: Session):
     update_all_processes_status(db)
-    return db.query(Process).all()
+    return db.query(Process).order_by(desc(Process.id)).all()
 
 def get_all_processes_with_audios_db(db: Session):
     update_all_processes_status(db)
