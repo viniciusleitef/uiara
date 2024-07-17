@@ -14,6 +14,16 @@ class ProcessService {
       throw error;
     }
   }
+
+  async deleteProcess(num_process:string) {
+    try {
+      console.log(`processo deleted ${num_process}`)
+      const response = await api.delete(`/process/${num_process}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 const processService = new ProcessService();

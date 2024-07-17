@@ -6,10 +6,15 @@ import { AudioFile } from "@mui/icons-material";
 import { BackPage } from "../../components/BackPage";
 import CircularProgress from "@mui/material/CircularProgress";
 import { formatDuration } from "../../utils/formatDuration";
+import { FaRegTrashAlt } from "react-icons/fa";
+import processService from "../../app/services/process";
+import { PopUp } from "../../components/PopUp";
 
 export const AllResults = () => {
   const [processes, setProcesses] = useState<ProcessProps[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [selectedProcess, setSelectedProcess] = useState<string | null>(null);
 
   useEffect(() => {
     getProcesses();
@@ -25,6 +30,33 @@ export const AllResults = () => {
       console.error(error);
       setIsLoading(false);
     }
+  };
+
+  const handleDeleteClick = (num_process: string) => {
+    setSelectedProcess(num_process);
+    setPopupVisible(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (selectedProcess) {
+      try {
+        await processService.deleteProcess(selectedProcess);
+        setProcesses((prevProcesses) =>
+          prevProcesses.filter(
+            (process) => process.num_process !== selectedProcess
+          )
+        );
+      } catch (error) {
+        console.error(error);
+      } finally {
+        handleClosePopup();
+      }
+    }
+  };
+
+  const handleClosePopup = () => {
+    setPopupVisible(false);
+    setSelectedProcess(null);
   };
 
   return (
@@ -44,12 +76,21 @@ export const AllResults = () => {
         ) : (
           processes.map((process) => (
             <div key={process.id}>
-              <div className="infos">
-                <h2>Processo #{process.num_process}</h2>
-                <p>
-                  Responsável: {process.responsible} - Data de Criação:{" "}
-                  {process.date_of_creation}
-                </p>
+              <div className="info-box">
+                <div className="infos">
+                  <h2>Processo #{process.num_process}</h2>
+                  <p>
+                    Responsável: {process.responsible} - Data de Criação:{" "}
+                    {process.created_at}
+                  </p>
+                </div>
+
+                <div
+                  className="trash-icon-box"
+                  onClick={() => handleDeleteClick(process.num_process)}
+                >
+                  <FaRegTrashAlt size={25} />
+                </div>
               </div>
               {process.audios.map((audio) => (
                 <Audio key={audio.id}>
@@ -74,6 +115,11 @@ export const AllResults = () => {
           ))
         )}
       </ResultsContainer>
+      <PopUp
+        visible={popupVisible}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleClosePopup}
+      />
     </>
   );
 };

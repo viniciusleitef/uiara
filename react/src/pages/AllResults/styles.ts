@@ -4,6 +4,43 @@ import colors from "../../styles/colors";
 export const ResultsContainer = styled.div`
   overflow-y: auto;
 
+  .teste{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+  }
+
+  .teste-content{
+    width: 500px;
+    height: 300px;
+    background-color: white;
+    border-radius: 10px;
+  }
+
+  .info-box{
+    display:flex;
+    justify-content: space-between;
+  }
+
+  .trash-icon-box{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: 300ms;
+  }
+
+  .trash-icon-box:hover{
+    color: blue;
+  }
+
   .infos {
     display: flex;
     flex-direction: column;
