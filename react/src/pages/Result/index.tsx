@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import audiosService from "../../app/services/audios";
 import { AudioProps } from "../../types";
-import { ResultAudio } from "./styles";
 import { AudioFile } from "@mui/icons-material";
 import { BackPage } from "../../components/BackPage";
+import { Audio } from "../AllResults/styles";
 
 export const Result = () => {
   const { numProcess } = useParams();
@@ -27,7 +27,7 @@ export const Result = () => {
       <div>
         <p>Número do Processo: #{numProcess}</p>
         {audios.map((audio, index) => (
-          <ResultAudio key={index}>
+          <Audio key={index}>
             <div className="audio">
               <AudioFile />
               <span>{audio.title}</span>
@@ -40,7 +40,7 @@ export const Result = () => {
               {audio.classification ? "Verdadeiro" : "Falso"}
             </div>
             <div className="accuracy">{audio.accuracy}%</div>
-          </ResultAudio>
+          </Audio>
         ))}
       </div>
     </>

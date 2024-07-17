@@ -4,7 +4,7 @@ import colors from "../../styles/colors";
 export const ResultsContainer = styled.div`
   overflow-y: auto;
 
-  .teste{
+  .teste {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,27 +17,27 @@ export const ResultsContainer = styled.div`
     z-index: 1;
   }
 
-  .teste-content{
+  .teste-content {
     width: 500px;
     height: 300px;
     background-color: white;
     border-radius: 10px;
   }
 
-  .info-box{
-    display:flex;
+  .info-box {
+    display: flex;
     justify-content: space-between;
   }
 
-  .trash-icon-box{
-    display:flex;
+  .trash-icon-box {
+    display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: 300ms;
   }
 
-  .trash-icon-box:hover{
+  .trash-icon-box:hover {
     color: blue;
   }
 
@@ -63,6 +63,11 @@ export const ResultsContainer = styled.div`
     border-bottom: 1px solid #ccc;
     padding-bottom: 15px;
     margin-bottom: 15px;
+
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
   }
 `;
 
@@ -70,28 +75,32 @@ export const Audio = styled.div`
   background-color: #eee;
   display: flex;
   align-items: center;
-  padding: 10px 15px;
+  padding: 20px 15px;
   margin: 10px 0px;
   border-radius: 6px;
-  justify-content: space-between;
+  justify-content: flex-start;
   position: relative;
 
   .audio {
     display: flex;
     align-items: center;
-    width: 40%;
+    width: 60%;
+    overflow: hidden;
+    margin-right: 10px;
 
     .audio-info {
+      width: 100%;
       span {
+        display: block;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+        width: 95%;
       }
 
       p {
         margin: 0;
         font-size: 0.7rem;
-        position: absolute;
       }
     }
   }
@@ -101,8 +110,8 @@ export const Audio = styled.div`
     border-radius: 6px;
     padding: 5px 10px;
     color: ${colors.textWhite};
-    position: absolute;
-    left: 50%;
+    width: 100px;
+    text-align: center;
   }
 
   .classification.true {
@@ -123,5 +132,7 @@ export const Audio = styled.div`
     font-size: 0.8rem;
     color: ${colors.textWhite};
     background-color: ${colors.secondary};
+    position: absolute;
+    right: 10px;
   }
 `;
