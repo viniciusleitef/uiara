@@ -29,7 +29,7 @@ export const Title = styled.h1`
   font-weight: 700;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 8px;
   margin: 12px 0;
 
   img {
