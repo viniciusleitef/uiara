@@ -2,6 +2,15 @@ import { api } from "..";
 import { ProcessPayload } from "./types";
 
 class ProcessService {
+  async getProcesses() {
+    try {
+      const response = await api.get("/processes");
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async postProcess(formData: ProcessPayload) {
     try {
       const response = await api.post("/process", formData, {
@@ -15,9 +24,9 @@ class ProcessService {
     }
   }
 
-  async deleteProcess(num_process:string) {
+  async deleteProcess(num_process: string) {
     try {
-      console.log(`processo deleted ${num_process}`)
+      console.log(`processo deleted ${num_process}`);
       const response = await api.delete(`/process/${num_process}`);
       return response;
     } catch (error) {

@@ -40,6 +40,21 @@ export const Upload = () => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
+  const checkIfProcessExists = async (processNumber: string) => {
+    try {
+      const response = await processService.getProcesses();
+      const processes = response.data;
+      return processes.some(
+        (process: { num_process: string }) =>
+          process.num_process === processNumber
+      );
+    } catch (error) {
+      console.error("Error checking process number:", error);
+      setErrorMessage("Erro ao verificar o número do processo");
+      throw error;
+    }
+  };
+
   const uploadAllFiles = async () => {
     if (!files.length || !processNumber || !responsible || !title) {
       setErrorMessage(
@@ -49,40 +64,48 @@ export const Upload = () => {
     }
 
     setIsUploading(true);
-    const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().slice(0, 10);
-    const uploadPromise = files.map(async (file) => {
-      try {
-        const formData: ProcessPayload = {
-          file: file,
-          title,
-          num_process: processNumber,
-          responsible,
-          created_at: formattedDate,
-        };
-        await processService.postProcess(formData);
-        setTotalProgress((prevProgress) => prevProgress + 100 / files.length);
-      } catch (error: unknown) {
-        console.error("Error uploading file:", error);
-        if (error instanceof Error) {
-          setErrorMessage("Erro ao enviar arquivo: " + error.message);
-        } else {
-          setErrorMessage("Erro ao enviar arquivo: Erro desconhecido");
-        }
-        throw error;
-      }
-    });
-
-    const delay = new Promise((resolve) => setTimeout(resolve, 3000));
 
     try {
+      setErrorMessage("Carregando arquivos...");
+      const processExists = await checkIfProcessExists(processNumber);
+      if (processExists) {
+        setErrorMessage("Um processo com este número já existe.");
+        setIsUploading(false);
+        return;
+      }
+
+      const currentDate = new Date();
+      const formattedDate = currentDate.toISOString().slice(0, 10);
+      const uploadPromise = files.map(async (file) => {
+        try {
+          const formData: ProcessPayload = {
+            file: file,
+            title,
+            num_process: processNumber,
+            responsible,
+            created_at: formattedDate,
+          };
+          await processService.postProcess(formData);
+          setTotalProgress((prevProgress) => prevProgress + 100 / files.length);
+        } catch (error: unknown) {
+          console.error("Error uploading file:", error);
+          if (error instanceof Error) {
+            setErrorMessage("Erro ao enviar arquivo: " + error.message);
+          } else {
+            setErrorMessage("Erro ao enviar arquivo: Erro desconhecido");
+          }
+          throw error;
+        }
+      });
+
+      const delay = new Promise((resolve) => setTimeout(resolve, 3000));
+
       await Promise.all([...uploadPromise, delay]);
       navigate(`/result/${processNumber}`);
       setFiles([]);
       setTotalProgress(0);
       setErrorMessage("");
     } catch {
-      setIsUploading(false);
       setErrorMessage("Erro ao enviar todos os arquivos");
     } finally {
       setIsUploading(false);
