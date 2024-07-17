@@ -5,6 +5,7 @@ import { Audio, ResultsContainer } from "./styles";
 import { AudioFile } from "@mui/icons-material";
 import { BackPage } from "../../components/BackPage";
 import CircularProgress from "@mui/material/CircularProgress";
+import { formatDuration } from "../../utils/formatDuration";
 import { FaRegTrashAlt } from "react-icons/fa";
 import processService from "../../app/services/process";
 import { PopUp } from "../../components/PopUp";
@@ -41,7 +42,9 @@ export const AllResults = () => {
       try {
         await processService.deleteProcess(selectedProcess);
         setProcesses((prevProcesses) =>
-          prevProcesses.filter((process) => process.num_process !== selectedProcess)
+          prevProcesses.filter(
+            (process) => process.num_process !== selectedProcess
+          )
         );
       } catch (error) {
         console.error(error);
@@ -82,15 +85,21 @@ export const AllResults = () => {
                   </p>
                 </div>
 
-                <div className="trash-icon-box" onClick={() => handleDeleteClick(process.num_process)}> 
-                  <FaRegTrashAlt size={25}/>
+                <div
+                  className="trash-icon-box"
+                  onClick={() => handleDeleteClick(process.num_process)}
+                >
+                  <FaRegTrashAlt size={25} />
                 </div>
               </div>
               {process.audios.map((audio) => (
                 <Audio key={audio.id}>
                   <div className="audio">
                     <AudioFile />
-                    <span>{audio.title}</span>
+                    <div className="audio-info">
+                      <span>{audio.title}</span>
+                      <p>Duração {formatDuration(audio.audio_duration)}</p>
+                    </div>
                   </div>
                   <div
                     className={`classification ${
@@ -113,4 +122,4 @@ export const AllResults = () => {
       />
     </>
   );
-}
+};

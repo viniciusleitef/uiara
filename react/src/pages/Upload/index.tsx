@@ -204,7 +204,7 @@ export const Upload = () => {
                 !files.length || !processNumber || !responsible || !title
               }
             >
-              Enviar Processos
+              Enviar Processo
             </Button>
           </ButtonFooter>
         </ButtonFooter>

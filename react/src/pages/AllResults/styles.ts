@@ -81,10 +81,18 @@ export const Audio = styled.div`
     align-items: center;
     width: 40%;
 
-    span {
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
+    .audio-info {
+      span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      p {
+        margin: 0;
+        font-size: 0.7rem;
+        position: absolute;
+      }
     }
   }
 
