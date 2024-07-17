@@ -58,7 +58,7 @@ export const Upload = () => {
           title,
           num_process: processNumber,
           responsible,
-          date_of_creation: formattedDate,
+          created_at: formattedDate,
         };
         await processService.postProcess(formData);
         setTotalProgress((prevProgress) => prevProgress + 100 / files.length);

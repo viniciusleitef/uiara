@@ -2,7 +2,8 @@ from fastapi import HTTPException
 from models.models import Process
 from sqlalchemy.orm import Session
 from schemas.Process import ProcessSchema
-from sqlalchemy.orm import desc
+from datetime import datetime
+from sqlalchemy import desc
 from controller.audioController import get_audios_by_process_id_bd, delete_audios_bd, create_audio_db, update_audio_db
 from trained_model.executaModelo import analyzingAudio
 import shutil
@@ -54,6 +55,7 @@ async def create_process_db(file, audio_data, process_data, db):
 
     else:
         await create_audio_db(file, audio_data, process.id, db)
+        update_process_date_db(process.id, db)
 
     # Pegando o processo novamente - Caso ele não tenha sido criado, estou garantindo agora que "process" não é none
     process = get_process_by_numprocess_db(process_data.num_process, db)
@@ -73,7 +75,8 @@ def create_process(process:ProcessSchema, status_id:int, db:Session):
         status_id = status_id,
         num_process = process.num_process,
         responsible = process.responsible,
-        date_of_creation = process.date_of_creation
+        created_at = process.created_at,
+        updated_at = datetime.now()
     )
 
     db.add(new_process)
@@ -107,6 +110,16 @@ def update_all_processes_status(db:Session):
         update_process_status(process, db)
     return {"message":"Processes updated"}
 
+def update_process_date_db(process_id:int, db:Session):
+    process = db.query(Process).filter(Process.id == process_id).first()
+    try:
+        if process:
+            process.updated_at = datetime.now()
+            db.commit()
+            db.refresh(process)
+    except Exception as e:
+        print(f"Ocorreu um erro ao atualizar a data de atualização do processo: {e}")
+        raise HTTPException(status_code=500, detail=f"An error occurred while updating process date: {str(e)}")
 
 async def delete_process_by_numprocess(num_process:str, base_filepath:str, db:Session):
     # Pegando process para pegar o id

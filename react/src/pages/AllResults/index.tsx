@@ -78,7 +78,7 @@ export const AllResults = () => {
                   <h2>Processo #{process.num_process}</h2>
                   <p>
                     Responsável: {process.responsible} - Data de Criação:{" "}
-                    {process.date_of_creation}
+                    {process.created_at}
                   </p>
                 </div>
 

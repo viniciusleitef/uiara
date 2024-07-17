@@ -8,7 +8,7 @@ export interface AudioProps {
 export interface ProcessProps {
   num_process: string;
   status_id: number;
-  date_of_creation: string;
+  created_at: string;
   id: number;
   responsible: string;
   audios: AudioProps[];
