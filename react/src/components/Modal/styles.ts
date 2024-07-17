@@ -39,7 +39,7 @@ export const Title = styled.h1`
   }
 `;
 
-export const Developer = styled.p`
+export const Developer = styled.a`
   font-size: 16px;
   color: ${colors.primary};
   font-weight: 700;
@@ -47,9 +47,16 @@ export const Developer = styled.p`
   align-items: center;
   gap: 12px;
   margin-top: 40px;
+  transition: 0.3s;
+  cursor: pointer;
 
   img {
     width: 48px;
     height: 48px;
+  }
+
+  &:hover {
+    color: ${colors.primary};
+    opacity: 0.8;
   }
 `;

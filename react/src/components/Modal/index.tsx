@@ -15,7 +15,11 @@ export const Modal = ({ children }: ModalProps) => {
       </Title>
       <ModalContent>{children}</ModalContent>
       <ContactUs />
-      <Developer>
+      <Developer
+        href="https://sites.google.com/view/laser-ufpb/in%C3%ADcio"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         Desenvolvido por <img src={laser_logo} alt="logo" />
       </Developer>
     </ModalContainer>
