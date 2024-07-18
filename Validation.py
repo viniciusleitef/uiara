@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import UploadFile, HTTPException
-from controller.audioController import get_audio_by_url_bd, get_audio_by_id_db
-from controller.processController import get_process_by_numprocess_db
+from controller.services import get_process_by_numprocess_db, get_audio_by_url_bd, get_audio_by_id_db
 import os
 
 class Validation():
@@ -24,3 +23,7 @@ class Validation():
         process = get_process_by_numprocess_db(numprocess, db)
         if not process:
             raise HTTPException(status_code=400, detail="Process does not exist")
+        
+    def title_and_files_equal(titles, files):
+        if len(titles) != len(files):
+            raise HTTPException(status_code=400, detail="Number of files and titles must be the same.")

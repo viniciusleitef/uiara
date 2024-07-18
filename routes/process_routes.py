@@ -30,18 +30,5 @@ async def delete_process(num_process: str, db: Session = Depends(get_db)):
     return await delete_process_by_numprocess(num_process, BASE_FILE_PATH, db)
 
 @router.post("/process")
-async def create_process(file: UploadFile ,title: str = Form(...), num_process: str = Form(...), responsible: str = Form(...), created_at: date = Form(...), db: Session = Depends(get_db)):
-    Validation.is_wave(file)
-
-    # Criando objeto AudioSchema e ProcessSchema
-    audio_data = AudioSchema(
-        title=title
-    )
-
-    process_data = ProcessSchema(
-        num_process = num_process,
-        responsible = responsible,
-        created_at = created_at
-    )
-
-    return await create_process_db(file, audio_data, process_data ,db)
+async def create_process(process: ProcessSchema, db: Session = Depends(get_db)):
+    return await create_process_db(process ,db)

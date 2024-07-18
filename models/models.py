@@ -1,7 +1,6 @@
 from database import Base
 from sqlalchemy import String, Integer, Boolean, Float, Date, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import datetime, timedelta
 
 class Status(Base):
     __tablename__ = "status"

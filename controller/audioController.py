@@ -1,9 +1,11 @@
 from fastapi import UploadFile, HTTPException
 from fastapi.responses import FileResponse
-from sqlalchemy.orm import Session
-from models.models import Audio
 from schemas.Audio import AudioSchema
+from sqlalchemy.orm import Session
+from Validation import Validation
+from models.models import Audio
 from pydub import AudioSegment
+from typing import List
 import noisereduce as nr
 import numpy as np
 import aiofiles
@@ -11,14 +13,14 @@ import librosa
 import io
 import os
 
+from controller.services import get_process_by_numprocess_db, get_audio_by_url_bd, get_audio_by_id_db, update_process_status
+from trained_model.executaModelo import analyzingAudio
+
 from config import BASE_FILE_PATH
 
 def get_audios_db(db: Session):
     audios = db.query(Audio).all()
     return {"audios": audios}
-
-def get_audio_by_id_db(audio_id:int, db:Session):
-    return db.query(Audio).filter(Audio.id == audio_id).first()
 
 def get_audios_by_process_id_bd(process_id:int, db:Session):
     audios = db.query(Audio).filter(Audio.process_id == process_id).all()
@@ -37,37 +39,76 @@ def get_audios_by_process_id_bd(process_id:int, db:Session):
         })
     return audioList
 
-def get_audio_by_url_bd(url:str, db:Session):
-    return db.query(Audio).filter(Audio.url == url).first()
-
 async def get_audioFile(audio_id: int, db:Session):
     audio = get_audio_by_id_db(audio_id, db)
     filePath = audio.url
     return FileResponse(path=filePath, media_type='audio/wav', filename=os.path.basename(filePath))
 
-async def create_audio_db(file: UploadFile, audio:AudioSchema, process_id:int, db: Session):
-    from Validation import Validation
-    file_location = f"{BASE_FILE_PATH}/Process_{process_id}/{file.filename}"
-    Validation.has_url(file_location, db)
-    await create_audio_file(file, file_location )
+async def create_audio_db(num_process:str, titles: List[str], db: Session, files: List[UploadFile]):
 
-    audio_duration = await get_audio_duration(file)
-    sample_rate = await get_sample_rate(file)
-    snr = await calculate_snr(file_location)
+    process = get_process_by_numprocess_db(num_process, db)
+    errors = []
+    audiosRegistered = []
 
-    new_audio = Audio(
-        process_id=process_id,
-        title=audio.title,
-        url=file_location,
-        audio_duration=audio_duration,
-        sample_rate=sample_rate,
-        snr = snr
+    for i, file in enumerate(files):
+        title = titles[i]
+        fileLocation = f"{BASE_FILE_PATH}/Process_{process.id}/{file.filename}"
+
+        audio = get_audio_by_url_bd(fileLocation, db)
+
+        if audio and audio.url == fileLocation:
+            errors.append({
+                "file": file.filename,
+                "error": "Áudio ja esta cadastrado nesse processo",
+                "status_code": 409
+            })
+            continue
+        
+        if not file.filename.endswith(('.wav')):
+            errors.append({
+                "file": file.filename,
+                "error": "O arquivo não é um arquivo WAV válido.",
+                "status_code": 400
+            })
+            continue      
+
+        await create_audio_file(file, fileLocation)
+        audio_duration = await get_audio_duration(file)
+        sample_rate = await get_sample_rate(file)
+        snr = await calculate_snr(fileLocation)
+
+        new_audio = Audio(
+            process_id=process.id,
+            title=title,
+            url=fileLocation,
+            audio_duration=audio_duration,
+            sample_rate=sample_rate,
+            snr = snr
         )
+
+        db.add(new_audio)
+        db.commit()
+        db.refresh(new_audio)
+
+        prediction, predicted_class = await analyzingAudio(fileLocation)
+        update_audio_db(fileLocation, prediction, predicted_class, db)
+        update_process_status(process, db)
+
+        audiosRegistered.append({
+            "id": new_audio.id,
+            "process_id": new_audio.process_id,
+            "title": new_audio.title,
+            "classification": new_audio.classification,
+            "accuracy": new_audio.accuracy,
+            "audio_duration": new_audio.audio_duration,
+            "sample_rate": new_audio.sample_rate,
+            "snr": new_audio.snr
+            })
     
-    db.add(new_audio)
-    db.commit()
-    
-    return new_audio
+    return {
+        "audiosRegisteres": audiosRegistered,
+        "errors": errors
+    }
     
 def update_audio_db(audioFilePath:str, prediction:float, predicted_class:bool, db:Session):
     predicted_class = convert_to_bool(predicted_class)

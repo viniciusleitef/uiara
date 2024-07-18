@@ -4,10 +4,12 @@ from sqlalchemy.orm import Session
 from schemas.Process import ProcessSchema
 from datetime import datetime
 from sqlalchemy import desc
-from controller.audioController import get_audios_by_process_id_bd, delete_audios_bd, create_audio_db, update_audio_db
-from trained_model.executaModelo import analyzingAudio
+from controller.audioController import get_audios_by_process_id_bd, delete_audios_bd
+from controller.services import get_process_by_numprocess_db, update_all_processes_status
 import shutil
 import os
+
+# Status - 1 = Em análise / 2 = Falso / 3 = Verdadeiro
 
 from config import BASE_FILE_PATH, STATUS_ID
 
@@ -29,10 +31,6 @@ def get_all_processes_with_audios_db(db: Session):
         response.append(process_dict)
     return response
 
-
-def get_process_by_numprocess_db(num_process: str, db:Session):
-    return db.query(Process).filter(Process.num_process == num_process).first()
-
 def verify_status(audioList):   
     for audio in audioList:
         if audio['classification']  == False:
@@ -41,41 +39,22 @@ def verify_status(audioList):
             return 1                        # Em análise
     return 3                                # Verdadeiro
 
-async def create_process_db(file, audio_data, process_data, db):
-    # Pegando o processo pelo num_process
-    # Caso não exista, cria processo e o áudio
-    # Caso exista, cria apenas o áudio
-
-    process = get_process_by_numprocess_db(process_data.num_process, db)
-
-    if process == None:
-        process_id = create_process(process_data, STATUS_ID, db)                  #retorna id do processo criado
-        create_process_dir(process_id, BASE_FILE_PATH)
-        await create_audio_db(file, audio_data, process_id, db)
-
-    else:
-        await create_audio_db(file, audio_data, process.id, db)
-        update_process_date_db(process.id, db)
-
-    # Pegando o processo novamente - Caso ele não tenha sido criado, estou garantindo agora que "process" não é none
-    process = get_process_by_numprocess_db(process_data.num_process, db)
-    audioFilePath = f"{BASE_FILE_PATH}/Process_{process.id}/{file.filename}"
-
-    # Execudando o modelo e passando o resuldado para listas de acuracia e clase predita
-    prediction, predicted_class = await analyzingAudio(audioFilePath)
+async def create_process_db(process, db):
+    db_process = db.query(Process).filter(Process.num_process == process.num_process)
+    if db_process.first() is not None:
+        raise HTTPException(status_code=400, detail="Processo already exists")
     
-    # Atualizando accuracy e classification
-    update_audio_db(audioFilePath, prediction, predicted_class, db)
-    update_process_status(process, db)
+    process_id = create_process(process, STATUS_ID, db)
+    create_process_dir(process_id, BASE_FILE_PATH)
 
-    return {"response":"success"}
+    return {'message': 'process created successfully'}
 
 def create_process(process:ProcessSchema, status_id:int, db:Session):
     new_process = Process(
         status_id = status_id,
         num_process = process.num_process,
         responsible = process.responsible,
-        created_at = process.created_at,
+        created_at = datetime.now(),
         updated_at = datetime.now()
     )
 
@@ -91,24 +70,6 @@ def create_process_dir(process_id:int, BaseFilePath:str):
         print(f"Pasta '{pasta_process}' criada com sucesso!")
     except Exception as e:
         print(f"Ocorreu um erro ao criar a pasta: {e}")
-
-def update_process_status_db(process_status:int , process:Process, db:Session):
-    process.status_id = process_status
-    db.commit()
-    db.refresh(process)
-    return 
-
-def update_process_status(process:Process, db:Session):
-    audioList = get_audios_by_process_id_bd(process.id, db)
-    process_status = verify_status(audioList)
-    update_process_status_db(process_status, process, db)
-    return {"message":"Process updated"}
-
-def update_all_processes_status(db:Session):
-    data = db.query(Process).all()
-    for process in data:
-        update_process_status(process, db)
-    return {"message":"Processes updated"}
 
 def update_process_date_db(process_id:int, db:Session):
     process = db.query(Process).filter(Process.id == process_id).first()
