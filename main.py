@@ -6,6 +6,7 @@ from controller.statusController import create_status_db
 
 from routes.process_routes import router as process_routes
 from routes.audio_routes import router as audio_routes
+from routes.trained_models_routes import router as trained_models_routes
 
 Base.metadata.create_all(bind=engine) 
 app = FastAPI()
