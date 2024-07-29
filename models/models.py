@@ -1,6 +1,7 @@
 from database import Base
-from sqlalchemy import String, Integer, Boolean, Float, Date, ForeignKey
+from sqlalchemy import String, Integer, Boolean, Float, Date, DateTime, ForeignKey, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from datetime import datetime
 
 class Status(Base):
     __tablename__ = "status"
@@ -47,3 +48,18 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False, unique=False)
     created_at: Mapped[str] = mapped_column(Date)
     updated_at: Mapped[str] = mapped_column(Date)
+
+class TrainedModels(Base):
+    __tablename__ = 'trained_models'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    model_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    version: Mapped[str] = mapped_column(String(30), nullable=False)
+    description: Mapped[str] = mapped_column(String(255))
+    file_path: Mapped[str] = mapped_column(String(255))
+    accuracy: Mapped[float] = mapped_column(Float)
+    loss: Mapped[float] = mapped_column(Float)
+    created_at: Mapped[str] = mapped_column(Date)
+    updated_at: Mapped[str] = mapped_column(Date)
+
+    __table_args__ = (UniqueConstraint('model_name', 'version', name='uix_model_version'),)
