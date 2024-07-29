@@ -1,7 +1,7 @@
 from pydantic import BaseModel
-from datetime import date
 
 class ProcessSchema(BaseModel):
+    title: str
     num_process: str
     responsible: str
 

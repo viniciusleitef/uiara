@@ -11,11 +11,11 @@ class ProcessService {
     }
   }
 
-  async postProcess(formData: ProcessPayload) {
+  async postProcess(processPayload: ProcessPayload) {
     try {
-      const response = await api.post("/process", formData, {
+      const response = await api.post("/process", processPayload, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       });
       return response;
@@ -28,6 +28,15 @@ class ProcessService {
     try {
       console.log(`processo deleted ${num_process}`);
       const response = await api.delete(`/process/${num_process}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateProcessTitle(num_process: string, new_title: string) {
+    try {
+      const response = await api.put(`/process/${num_process}?new_title=${encodeURIComponent(new_title)}`);
       return response;
     } catch (error) {
       throw error;

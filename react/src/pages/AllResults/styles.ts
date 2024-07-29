@@ -17,19 +17,19 @@ export const ResultsContainer = styled.div`
     z-index: 1;
   }
 
-  .teste-content {
-    width: 500px;
-    height: 300px;
-    background-color: white;
-    border-radius: 10px;
-  }
-
   .info-box {
     display: flex;
     justify-content: space-between;
   }
 
-  .trash-icon-box {
+  .configs-buttons-box{
+    display: flex;
+    justify-content: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .icon-box {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -37,7 +37,7 @@ export const ResultsContainer = styled.div`
     transition: 300ms;
   }
 
-  .trash-icon-box:hover {
+  .icon-box:hover {
     color: blue;
   }
 

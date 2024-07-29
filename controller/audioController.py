@@ -1,8 +1,6 @@
 from fastapi import UploadFile, HTTPException
 from fastapi.responses import FileResponse
-from schemas.Audio import AudioSchema
 from sqlalchemy.orm import Session
-from Validation import Validation
 from models.models import Audio
 from pydub import AudioSegment
 from typing import List
@@ -13,7 +11,8 @@ import librosa
 import io
 import os
 
-from controller.services import get_process_by_numprocess_db, get_audio_by_url_bd, get_audio_by_id_db, update_process_status
+from controller.services import get_process_by_numprocess_db, get_audio_by_url_db, get_audio_by_id_db, update_process_status, update_process_date_db, get_process_by_process_id
+
 from trained_model.executaModelo import analyzingAudio
 
 from config import BASE_FILE_PATH
@@ -22,7 +21,7 @@ def get_audios_db(db: Session):
     audios = db.query(Audio).all()
     return {"audios": audios}
 
-def get_audios_by_process_id_bd(process_id:int, db:Session):
+def get_audios_by_process_id_db(process_id:int, db:Session):
     audios = db.query(Audio).filter(Audio.process_id == process_id).all()
     audioList = []
 
@@ -44,17 +43,16 @@ async def get_audioFile(audio_id: int, db:Session):
     filePath = audio.url
     return FileResponse(path=filePath, media_type='audio/wav', filename=os.path.basename(filePath))
 
-async def create_audio_db(num_process:str, titles: List[str], db: Session, files: List[UploadFile]):
+async def create_audio_db(num_process:str, db: Session, files: List[UploadFile]):
 
     process = get_process_by_numprocess_db(num_process, db)
     errors = []
     audiosRegistered = []
 
     for i, file in enumerate(files):
-        title = titles[i]
         fileLocation = f"{BASE_FILE_PATH}/Process_{process.id}/{file.filename}"
 
-        audio = get_audio_by_url_bd(fileLocation, db)
+        audio = get_audio_by_url_db(fileLocation, db)
 
         if audio and audio.url == fileLocation:
             errors.append({
@@ -79,7 +77,7 @@ async def create_audio_db(num_process:str, titles: List[str], db: Session, files
 
         new_audio = Audio(
             process_id=process.id,
-            title=title,
+            title=file.filename,
             url=fileLocation,
             audio_duration=audio_duration,
             sample_rate=sample_rate,
@@ -113,7 +111,7 @@ async def create_audio_db(num_process:str, titles: List[str], db: Session, files
 def update_audio_db(audioFilePath:str, prediction:float, predicted_class:bool, db:Session):
     predicted_class = convert_to_bool(predicted_class)
     prediction = convert_acuracy(prediction)
-    updated_audio = get_audio_by_url_bd(audioFilePath, db)
+    updated_audio = get_audio_by_url_db(audioFilePath, db)
     if updated_audio:
         updated_audio.classification = predicted_class
         updated_audio.accuracy = prediction
@@ -121,6 +119,16 @@ def update_audio_db(audioFilePath:str, prediction:float, predicted_class:bool, d
         db.refresh(updated_audio)
         return updated_audio
     return None
+
+def update_audio_title_db(audio_id, new_title, db):
+    audio = get_audio_by_id_db(audio_id, db)
+    if audio:
+        audio.title = new_title
+        db.commit()
+        db.refresh(audio)
+        update_process_date_db(audio.process_id, db)
+        return {"message": f"Audio ID: {audio_id} teve o title trocado para: {new_title}"}
+    raise HTTPException(status_code=404, detail=f"Audio ID {audio_id} não encontrado")
 
 def convert_to_bool(predicted_class:bool):
     if predicted_class.lower() == 'fake':
@@ -198,9 +206,38 @@ async def calculate_snr(file_path: str):
     snr_rounded = round(snr, 2)
     return snr_rounded
 
+def delete_audio(audio_id, db):
+    audio = db.query(Audio).filter(Audio.id == audio_id).first()
+    if audio:
+        delete_audio_db(audio, db)
+        delete_audio_file(audio)
 
+        #Atualizando processo referente ao audio
+        update_process_date_db(audio.process_id, db)
+        process = get_process_by_process_id(audio.process_id, db)
+        update_process_status(process, db)
+        
+        return {'message': f'Áudio ID {audio.id} deletado com sucesso'}
+    raise HTTPException(status_code=404, detail=f"Arquivo {audio_id} não existe ou já foi deletado")
 
-def delete_audios_bd(process_id:int, db:Session):
+def delete_audio_db(audio, db):
+    db.delete(audio)
+    db.commit()
+
+def delete_audio_file(audio):   
+    file_path = audio.url
+    try:
+        if os.path.exists(file_path):
+            os.remove(file_path)  
+            print(f"Arquivo '{file_path}' excluído com sucesso!")
+        else:
+            print(f"Arquivo '{file_path}' não encontrado.")
+    except Exception as e:
+        print(f"Ocorreu um erro ao excluir o arquivo: {e}")
+        raise HTTPException(status_code=500, detail=f"Ocorreu um erro ao excluir o arquivo: {str(e)}")
+    
+    
+def delete_audios_db(process_id:int, db:Session):
     try:
         audios = db.query(Audio).filter(Audio.process_id == process_id).all()
         for audio in audios:

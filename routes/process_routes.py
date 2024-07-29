@@ -5,7 +5,7 @@ from datetime import date
 from Validation import Validation
 from schemas.Audio import AudioSchema
 from schemas.Process import ProcessSchema
-from controller.processController import get_process_by_numprocess_db, get_all_process_db, get_all_processes_with_audios_db, delete_process_by_numprocess, create_process_db
+from controller.processController import get_process_by_numprocess_db, get_all_process_db, get_all_processes_with_audios_db, delete_process_by_numprocess, create_process_db, update_process_title_db
 
 from config import BASE_FILE_PATH
 
@@ -32,3 +32,7 @@ async def delete_process(num_process: str, db: Session = Depends(get_db)):
 @router.post("/process")
 async def create_process(process: ProcessSchema, db: Session = Depends(get_db)):
     return await create_process_db(process ,db)
+
+@router.put("/process/{num_process}")
+async def update_process_title(num_process: str, new_title: str, db: Session = Depends(get_db)):
+    return update_process_title_db(num_process, new_title, db)

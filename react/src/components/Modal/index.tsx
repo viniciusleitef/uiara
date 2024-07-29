@@ -11,7 +11,7 @@ export const Modal = ({ children }: ModalProps) => {
     <ModalContainer>
       <Title>
         <img src={tre_icon} alt="logo" />
-        IAra
+        uIAra
       </Title>
       <ModalContent>{children}</ModalContent>
       <ContactUs />

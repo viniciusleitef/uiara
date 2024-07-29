@@ -5,11 +5,13 @@ export interface AudioProps {
   accuracy: number;
   audio_duration: number;
   sample_rate: number;
+  snr: number;
 }
 
 export interface ProcessProps {
   num_process: string;
   status_id: number;
+  title: string;
   created_at: string;
   id: number;
   responsible: string;
@@ -25,4 +27,10 @@ export interface AudioFileProps {
   dateCreated: string;
   lastModified: string;
   server: string;
+}
+
+export interface ErrorAudio{
+  file: string;
+  error: string;
+  status_code: number;
 }

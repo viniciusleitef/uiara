@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ButtonFooter,
   Fields,
@@ -7,6 +7,7 @@ import {
   UploadContainer,
 } from "./styles";
 import UploadIcon from "@mui/icons-material/Upload";
+import { useLocation } from 'react-router-dom';
 import Button from "@mui/material/Button";
 import LinearProgress from "@mui/material/LinearProgress";
 import Box from "@mui/material/Box";
@@ -15,29 +16,64 @@ import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ProcessPayload } from "../../app/services/process/types";
 import processService from "../../app/services/process";
+import audioService from "../../app/services/audios";
 import AudioFileIcon from "@mui/icons-material/AudioFile";
 import { CircularProgress, InputAdornment, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { BackPage } from "../../components/BackPage";
+import { AudioProps } from "../../types";
+import { PrecisionManufacturing } from "@mui/icons-material";
 
 export const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
+  const [existingFiles, setExistingFiles] = useState<AudioProps[]>([]);
+  const [audiosToDelete, setAudiosToDelete] = useState<AudioProps[]>([]);
   const [totalProgress, setTotalProgress] = useState(0);
   const [processNumber, setProcessNumber] = useState("");
   const [responsible, setResponsible] = useState("");
   const [title, setTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [isModified, setIsModified] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { process } = location.state || {};
+
+  useEffect(() => {
+    if (process) {
+      setProcessNumber(process.num_process);
+      setResponsible(process.responsible);
+      setTitle(process.title);
+      setExistingFiles(process.audios);
+    }
+  }, [process]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
     setFiles([...files, ...Array.from(event.target.files)]);
+    setIsModified(true);
   };
 
   const removeFile = (index: number) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+    setIsModified(true);
+  };
+
+  const removeExistingFile = (id: number) => {
+    if (process){
+      const audio = existingFiles.find((file) => file.id === id);
+      if (audio) {
+        setAudiosToDelete((prevAudios) => [...prevAudios, audio]);
+        setExistingFiles((prevFiles) => prevFiles.filter((audio) => audio.id !== id));
+        setIsModified(true);
+      } else {
+        setErrorMessage(`Arquivo com ID ${id} não encontrado.`);
+      }
+    }
+    setExistingFiles((prevFiles) => prevFiles.filter((file) => file.id !== id));
+    setIsModified(true);
   };
 
   const checkIfProcessExists = async (processNumber: string) => {
@@ -56,12 +92,56 @@ export const Upload = () => {
   };
 
   const uploadAllFiles = async () => {
+    if (process){
+      console.log(audiosToDelete)
+      setIsUploading(true);
+      let audioResponseData
+
+      if (audiosToDelete.length > 0) {
+        try {
+          const deletePromises = audiosToDelete.map(audio => audioService.deleteAudio(audio.id));
+          const audioResponses = await Promise.all(deletePromises);
+          console.log(audioResponses);
+        } catch (error) {
+          console.error("Error deleting audio files:", error);
+          setErrorMessage("Erro ao excluir os arquivos");
+        }
+      }
+      
+      if(files.length > 0){
+        try {
+          const formData = new FormData();
+          formData.append('num_process', processNumber);
+          files.forEach((file) => {
+            formData.append('files', file);
+          });
+    
+          const audioResponse = await audioService.postAudio(formData);
+          audioResponseData = audioResponse.data
+  
+        } catch (error) {
+          setErrorMessage("Erro ao enviar todos os arquivos");
+        } finally {
+          setIsUploading(false);
+        }
+      }
+
+      processService.updateProcessTitle(process.num_process, title)
+      navigate(`/result/${processNumber}`, { state: { audioResponseData } });
+      setFiles([]);
+      setTotalProgress(0);
+      setErrorMessage("");
+
+      return
+    }
+
     if (!files.length || !processNumber || !responsible || !title) {
       setErrorMessage(
         "Todos os campos devem ser preenchidos e deve haver pelo menos um arquivo para enviar."
       );
       return;
     }
+
 
     setIsUploading(true);
 
@@ -74,34 +154,25 @@ export const Upload = () => {
         return;
       }
 
-      const currentDate = new Date();
-      const formattedDate = currentDate.toISOString().slice(0, 10);
-      const uploadPromise = files.map(async (file) => {
-        try {
-          const formData: ProcessPayload = {
-            file: file,
-            title,
-            num_process: processNumber,
-            responsible,
-            created_at: formattedDate,
-          };
-          await processService.postProcess(formData);
-          setTotalProgress((prevProgress) => prevProgress + 100 / files.length);
-        } catch (error: unknown) {
-          console.error("Error uploading file:", error);
-          if (error instanceof Error) {
-            setErrorMessage("Erro ao enviar arquivo: " + error.message);
-          } else {
-            setErrorMessage("Erro ao enviar arquivo: Erro desconhecido");
-          }
-          throw error;
-        }
+      const processPayLoad: ProcessPayload = {
+        title: title,
+        num_process: processNumber,
+        responsible: responsible,
+      }
+
+      await processService.postProcess(processPayLoad);
+
+      const formData = new FormData();
+      formData.append('num_process', processNumber);
+      files.forEach((file) => {
+        formData.append('files', file);
       });
 
-      const delay = new Promise((resolve) => setTimeout(resolve, 3000));
+      const audioResponse = await audioService.postAudio(formData);
+      const audioResponseData = audioResponse.data
+      console.log(audioResponseData)
 
-      await Promise.all([...uploadPromise, delay]);
-      navigate(`/result/${processNumber}`);
+      navigate(`/result/${processNumber}`, { state: { audioResponseData } });
       setFiles([]);
       setTotalProgress(0);
       setErrorMessage("");
@@ -134,6 +205,7 @@ export const Upload = () => {
                   <InputAdornment position="start">#</InputAdornment>
                 ),
               }}
+              disabled={process}
             />
             <TextField
               label="Responsável"
@@ -141,6 +213,7 @@ export const Upload = () => {
               fullWidth
               value={responsible}
               onChange={(e) => setResponsible(e.target.value)}
+              disabled={process}
             />
           </Box>
           <TextField
@@ -148,7 +221,10 @@ export const Upload = () => {
             variant="outlined"
             fullWidth
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              setIsModified(true);
+            }}
           />
         </Fields>
 
@@ -172,6 +248,7 @@ export const Upload = () => {
               Upload
             </Button>
           </label>
+          
           {isUploading && (
             <Box mt={2} display="flex" justifyContent="center">
               <CircularProgress />
@@ -184,11 +261,29 @@ export const Upload = () => {
             {errorMessage}
           </Typography>
         )}
-
-        {files.length > 0 && (
+        
+        {(existingFiles.length > 0 || files.length > 0) && (
           <LoadedAudioContainer>
+            {existingFiles.map((file) => (
+              <LoadedAudio key={file.id}>
+                <AudioFileIcon />
+                <Typography
+                  variant="body2"
+                  style={{ flexGrow: 1, marginRight: 20 }}
+                >
+                  {file.title}
+                </Typography>
+        
+                <IconButton
+                  onClick={() => removeExistingFile(file.id)}
+                  aria-label="delete"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </LoadedAudio>
+            ))}
             {files.map((file, index) => (
-              <LoadedAudio>
+              <LoadedAudio key={index}>
                 <AudioFileIcon />
                 <Typography
                   variant="body2"
@@ -196,6 +291,7 @@ export const Upload = () => {
                 >
                   {file.name}
                 </Typography>
+
                 <IconButton
                   onClick={() => removeFile(index)}
                   aria-label="delete"
@@ -218,18 +314,16 @@ export const Upload = () => {
         )}
 
         <ButtonFooter>
-          <ButtonFooter>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={uploadAllFiles}
-              disabled={
-                !files.length || !processNumber || !responsible || !title
-              }
-            >
-              Enviar Processo
-            </Button>
-          </ButtonFooter>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={uploadAllFiles}
+            disabled={
+              !isModified || !processNumber || !responsible || !title
+            }
+          >
+            Enviar Processo
+          </Button>
         </ButtonFooter>
       </UploadContainer>
     </>

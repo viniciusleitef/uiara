@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from schemas.Process import ProcessSchema
 from datetime import datetime
 from sqlalchemy import desc
-from controller.audioController import get_audios_by_process_id_bd, delete_audios_bd
-from controller.services import get_process_by_numprocess_db, update_all_processes_status
+from controller.audioController import get_audios_by_process_id_db, delete_audios_db
+from controller.services import get_process_by_numprocess_db, update_all_processes_status_db
 import shutil
 import os
 
@@ -13,20 +13,17 @@ import os
 
 from config import BASE_FILE_PATH, STATUS_ID
 
-def get_process_by_process_id(process_id, db):
-    return db.query(Process).filter(Process.id == process_id).first()
-
 def get_all_process_db(db: Session):
-    update_all_processes_status(db)
+    update_all_processes_status_db(db)
     return db.query(Process).order_by(desc(Process.id)).all()
 
 def get_all_processes_with_audios_db(db: Session):
-    update_all_processes_status(db)
+    update_all_processes_status_db(db)
     processes = get_all_process_db(db)
     response = []
     for process in processes:
         process_dict = process.__dict__
-        audios = get_audios_by_process_id_bd(process.id, db)
+        audios = get_audios_by_process_id_db(process.id, db)
         process_dict['audios'] = audios  # Já são dicionários
         response.append(process_dict)
     return response
@@ -44,15 +41,16 @@ async def create_process_db(process, db):
     if db_process.first() is not None:
         raise HTTPException(status_code=400, detail="Processo already exists")
     
-    process_id = create_process(process, STATUS_ID, db)
-    create_process_dir(process_id, BASE_FILE_PATH)
+    new_process = create_process(process, STATUS_ID, db)
+    create_process_dir(new_process.id, BASE_FILE_PATH)
 
-    return {'message': 'process created successfully'}
+    return new_process
 
 def create_process(process:ProcessSchema, status_id:int, db:Session):
     new_process = Process(
         status_id = status_id,
         num_process = process.num_process,
+        title = process.title,
         responsible = process.responsible,
         created_at = datetime.now(),
         updated_at = datetime.now()
@@ -61,7 +59,7 @@ def create_process(process:ProcessSchema, status_id:int, db:Session):
     db.add(new_process)
     db.commit()
     
-    return new_process.id
+    return new_process
 
 def create_process_dir(process_id:int, BaseFilePath:str):
     pasta_process = f"{BaseFilePath}/Process_{process_id}"
@@ -71,24 +69,13 @@ def create_process_dir(process_id:int, BaseFilePath:str):
     except Exception as e:
         print(f"Ocorreu um erro ao criar a pasta: {e}")
 
-def update_process_date_db(process_id:int, db:Session):
-    process = db.query(Process).filter(Process.id == process_id).first()
-    try:
-        if process:
-            process.updated_at = datetime.now()
-            db.commit()
-            db.refresh(process)
-    except Exception as e:
-        print(f"Ocorreu um erro ao atualizar a data de atualização do processo: {e}")
-        raise HTTPException(status_code=500, detail=f"An error occurred while updating process date: {str(e)}")
-
 async def delete_process_by_numprocess(num_process:str, base_filepath:str, db:Session):
     # Pegando process para pegar o id
     process = get_process_by_numprocess_db(num_process, db)
 
     await delete_process_dir(process.id, base_filepath)
-    delete_audios_bd(process.id, db)
-    delete_process_bd(process.id, db)
+    delete_audios_db(process.id, db)
+    delete_process_db(process.id, db)
     return f"Process {num_process} and associated audios deleted successfully"
 
 async def delete_process_dir(process_id:int, base_filepath:str):
@@ -103,7 +90,7 @@ async def delete_process_dir(process_id:int, base_filepath:str):
         print(f"Ocorreu um erro ao excluir a pasta: {e}")
         raise HTTPException(status_code=500, detail=f"An error occurred while deleting the directory: {str(e)}")
 
-def delete_process_bd(process_id, db):
+def delete_process_db(process_id, db):
     try:
         process = db.query(Process).filter(Process.id == process_id).first()
         if process:
@@ -115,3 +102,14 @@ def delete_process_bd(process_id, db):
     except Exception as e:
         print(f"Ocorreu um erro ao excluir o processo: {e}")
         raise HTTPException(status_code=500, detail=f"An error occurred while deleting the process: {str(e)}")
+    
+def update_process_title_db(num_process:str, new_title:str, db:Session):
+    process = get_process_by_numprocess_db(num_process, db)
+    if process:
+        process.title = new_title
+        process.updated_at = datetime.now()
+        db.commit()
+        db.refresh(process)
+        return f"Título do processo '{num_process}' atualizado com sucesso!"
+    else:
+        return f"Processo '{num_process}' não encontrado."

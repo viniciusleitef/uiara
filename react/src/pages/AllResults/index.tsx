@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ProcessProps } from "../../types";
 import audioService from "../../app/services/audios";
 import { Audio, ResultsContainer } from "./styles";
@@ -7,6 +8,7 @@ import { BackPage } from "../../components/BackPage";
 import CircularProgress from "@mui/material/CircularProgress";
 import { formatDuration } from "../../utils/formatDuration";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { MdOutlineEdit } from "react-icons/md";
 import processService from "../../app/services/process";
 import { PopUp } from "../../components/PopUp";
 
@@ -15,6 +17,7 @@ export const AllResults = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [popupVisible, setPopupVisible] = useState(false);
   const [selectedProcess, setSelectedProcess] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getProcesses();
@@ -35,6 +38,15 @@ export const AllResults = () => {
   const handleDeleteClick = (num_process: string) => {
     setSelectedProcess(num_process);
     setPopupVisible(true);
+  };
+
+  const handleEditClick = (num_process: string) => {
+    //Criar lógica para editar audios
+    setSelectedProcess(num_process);
+    const process = processes.find(p => p.num_process === num_process);
+    if (process) {
+      navigate('/upload', { state: { process } });
+    }
   };
 
   const handleConfirmDelete = async () => {
@@ -61,7 +73,7 @@ export const AllResults = () => {
 
   return (
     <>
-      <BackPage />
+      <BackPage to="/home" />
       <ResultsContainer>
         {isLoading ? (
           <div
@@ -78,19 +90,30 @@ export const AllResults = () => {
             <div key={process.id}>
               <div className="info-box">
                 <div className="infos">
-                  <h2>Processo #{process.num_process}</h2>
+                  <h2>{process.title} #{process.num_process}</h2>
                   <p>
                     Responsável: {process.responsible} - Data de Criação:{" "}
                     {process.created_at}
                   </p>
                 </div>
 
-                <div
-                  className="trash-icon-box"
-                  onClick={() => handleDeleteClick(process.num_process)}
-                >
-                  <FaRegTrashAlt size={25} />
+                <div className="configs-buttons-box">
+                  <div 
+                    className="icon-box"
+                    onClick={() => handleEditClick(process.num_process)}
+                    >
+                    <MdOutlineEdit size={28}/>
+                  </div>
+
+                  <div
+                    className="trash icon-box"
+                    onClick={() => handleDeleteClick(process.num_process)}
+                  >
+                    <FaRegTrashAlt size={25} />
+                  </div>
+                  
                 </div>
+
               </div>
               {process.audios.map((audio) => (
                 <Audio key={audio.id}>
