@@ -22,6 +22,7 @@ import { CircularProgress, InputAdornment, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { BackPage } from "../../components/BackPage";
 import { AudioProps } from "../../types";
+import InputMask from 'react-input-mask';
 import { PrecisionManufacturing } from "@mui/icons-material";
 
 export const Upload = () => {
@@ -189,24 +190,29 @@ export const Upload = () => {
       <UploadContainer>
         <Fields>
           <Box display="flex" gap={2}>
-            <TextField
-              label="Número do Processo"
-              variant="outlined"
-              fullWidth
-              value={processNumber}
-              onChange={(e) => {
-                const value = e.target.value;
-                if (/^\d*$/.test(value)) {
-                  setProcessNumber(value);
-                }
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">#</InputAdornment>
-                ),
-              }}
-              disabled={process}
-            />
+          <InputMask
+            mask="9999999-99.9999.9.99.9999"
+            value={processNumber}
+            onChange={(e) => setProcessNumber(e.target.value)}
+            disabled={process}
+          >
+            {() => (
+              <TextField
+                label="Número do Processo"
+                variant="outlined"
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">#</InputAdornment>
+                  ),
+                }}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                disabled={process}
+              />
+            )}
+        </InputMask>
             <TextField
               label="Responsável"
               variant="outlined"
