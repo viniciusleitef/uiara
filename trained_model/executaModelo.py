@@ -48,7 +48,7 @@ def segmented_extract_features(filepath):
 
 async def analyzingAudio(filePath):
    # Carregar o modelo treinado
-    model_path = 'trained_model/audio_classification_model_3.2.h5'
+    model_path = 'trained_model/audio_classification_model_5.0.h5'
     model = load_model(model_path)
 
     # Extrair características MFCC do arquivo de áudio
