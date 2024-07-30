@@ -41,7 +41,6 @@ export const AllResults = () => {
   };
 
   const handleEditClick = (num_process: string) => {
-    //Criar lógica para editar audios
     setSelectedProcess(num_process);
     const process = processes.find(p => p.num_process === num_process);
     if (process) {
@@ -71,6 +70,14 @@ export const AllResults = () => {
     setSelectedProcess(null);
   };
 
+  const formatProcessNumber = (numProcess: string): string => {
+    if (numProcess.length !== 20) {
+      throw new Error('Número do processo deve conter exatamente 20 dígitos.');
+    }
+    const formatted = `${numProcess.slice(0, 7)}-${numProcess.slice(7, 9)}.${numProcess.slice(9, 13)}.${numProcess.slice(13, 14)}.${numProcess.slice(14, 16)}.${numProcess.slice(16, 20)}`;
+    return formatted;
+  };
+
   return (
     <>
       <BackPage to="/home" />
@@ -90,7 +97,7 @@ export const AllResults = () => {
             <div key={process.id}>
               <div className="info-box">
                 <div className="infos">
-                  <h2>{process.title} #{process.num_process}</h2>
+                  <h2>{process.title} #{formatProcessNumber(process.num_process)}</h2>
                   <p>
                     Responsável: {process.responsible} - Data de Criação:{" "}
                     {process.created_at}
@@ -101,7 +108,7 @@ export const AllResults = () => {
                   <div 
                     className="icon-box"
                     onClick={() => handleEditClick(process.num_process)}
-                    >
+                  >
                     <MdOutlineEdit size={28}/>
                   </div>
 
@@ -111,9 +118,7 @@ export const AllResults = () => {
                   >
                     <FaRegTrashAlt size={25} />
                   </div>
-                  
                 </div>
-
               </div>
               {process.audios.map((audio) => (
                 <Audio key={audio.id}>
@@ -129,7 +134,7 @@ export const AllResults = () => {
                       audio.classification ? "true" : "false"
                     }`}
                   >
-                    {audio.classification ? "Verdadeiro" : "Falso"}
+                    {audio.classification ? "Humano" : "Sintético"}
                   </div>
                   <div className="accuracy">{audio.accuracy}%</div>
                 </Audio>

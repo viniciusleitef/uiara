@@ -23,7 +23,9 @@ import { useNavigate } from "react-router-dom";
 import { BackPage } from "../../components/BackPage";
 import { AudioProps } from "../../types";
 import InputMask from 'react-input-mask';
-import { PrecisionManufacturing } from "@mui/icons-material";
+import { GiConsoleController } from "react-icons/gi";
+import React from 'react';
+
 
 export const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -92,7 +94,14 @@ export const Upload = () => {
     }
   };
 
+  const cleanProcessNumber = (processNumber: string) => {
+    return processNumber.replace(/\D/g, '');
+  };
+
   const uploadAllFiles = async () => {
+
+    const cleanedProcessNumber = cleanProcessNumber(processNumber);
+
     if (process){
       console.log(audiosToDelete)
       setIsUploading(true);
@@ -112,7 +121,7 @@ export const Upload = () => {
       if(files.length > 0){
         try {
           const formData = new FormData();
-          formData.append('num_process', processNumber);
+          formData.append('num_process', cleanedProcessNumber);
           files.forEach((file) => {
             formData.append('files', file);
           });
@@ -128,7 +137,7 @@ export const Upload = () => {
       }
 
       processService.updateProcessTitle(process.num_process, title)
-      navigate(`/result/${processNumber}`, { state: { audioResponseData } });
+      navigate(`/result/${cleanedProcessNumber}`, { state: { audioResponseData } });
       setFiles([]);
       setTotalProgress(0);
       setErrorMessage("");
@@ -136,7 +145,7 @@ export const Upload = () => {
       return
     }
 
-    if (!files.length || !processNumber || !responsible || !title) {
+    if (!files.length || !cleanedProcessNumber || !responsible || !title) {
       setErrorMessage(
         "Todos os campos devem ser preenchidos e deve haver pelo menos um arquivo para enviar."
       );
@@ -148,23 +157,23 @@ export const Upload = () => {
 
     try {
       setErrorMessage("Carregando arquivos...");
-      const processExists = await checkIfProcessExists(processNumber);
+      const processExists = await checkIfProcessExists(cleanedProcessNumber);
       if (processExists) {
         setErrorMessage("Um processo com este número já existe.");
         setIsUploading(false);
         return;
       }
-
+      
       const processPayLoad: ProcessPayload = {
         title: title,
-        num_process: processNumber,
+        num_process: cleanedProcessNumber,
         responsible: responsible,
       }
 
       await processService.postProcess(processPayLoad);
 
       const formData = new FormData();
-      formData.append('num_process', processNumber);
+      formData.append('num_process', cleanedProcessNumber);
       files.forEach((file) => {
         formData.append('files', file);
       });
@@ -173,7 +182,9 @@ export const Upload = () => {
       const audioResponseData = audioResponse.data
       console.log(audioResponseData)
 
-      navigate(`/result/${processNumber}`, { state: { audioResponseData } });
+      console.log(audioResponseData)
+
+      navigate(`/result/${cleanedProcessNumber}`, { state: { audioResponseData } });
       setFiles([]);
       setTotalProgress(0);
       setErrorMessage("");
@@ -182,6 +193,10 @@ export const Upload = () => {
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setProcessNumber(e.target.value);
   };
 
   return (
@@ -193,11 +208,12 @@ export const Upload = () => {
           <InputMask
             mask="9999999-99.9999.9.99.9999"
             value={processNumber}
-            onChange={(e) => setProcessNumber(e.target.value)}
+            onChange={handleChange}
             disabled={process}
           >
-            {() => (
+            {(inputProps: any) => (
               <TextField
+                {...inputProps}
                 label="Número do Processo"
                 variant="outlined"
                 fullWidth
@@ -212,7 +228,7 @@ export const Upload = () => {
                 disabled={process}
               />
             )}
-        </InputMask>
+          </InputMask>
             <TextField
               label="Responsável"
               variant="outlined"

@@ -1,8 +1,9 @@
 import { api } from "..";
 
 class AudioService {
-  async getAudios(numProcess: number) {
+  async getAudios(numProcess: string) {
     try {
+      console.log("numProcess", numProcess);
       const response = await api.get(`/audios/${numProcess}`);
       return response;
     } catch (error) {

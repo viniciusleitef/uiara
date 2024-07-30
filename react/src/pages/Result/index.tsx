@@ -18,20 +18,38 @@ export const Result = () => {
 
   useEffect(() => {
     const fetchAudios = async () => {
-      console.log("numProcess", numProcess);
-      const response = await audiosService.getAudios(Number(numProcess));
-      if (response) {
-        setAudios(response.data);
+      if (numProcess) { 
+        console.log("numProcess", numProcess);
+        try {
+          const response = await audiosService.getAudios(numProcess);
+          if (response) {
+            setAudios(response.data);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar áudios:", error);
+        }
       }
     };
     fetchAudios();
   }, [numProcess]);
 
+  const formatProcessNumber = (numProcess: string): string => {
+    console.log(numProcess);
+    
+    if (numProcess.length !== 20) {
+      throw new Error('Número do processo deve conter exatamente 20 dígitos.');
+    }
+
+    const formatted = `${numProcess.slice(0, 7)}-${numProcess.slice(7, 9)}.${numProcess.slice(9, 13)}.${numProcess.slice(13, 14)}.${numProcess.slice(14, 16)}.${numProcess.slice(16, 20)}`;
+  
+    return formatted;
+  };
+
   return (
     <>
       <BackPage to="/results" />
       <div>
-        <p>Número do Processo: #{numProcess}</p>
+      <p>Número do Processo: #{numProcess ? formatProcessNumber(numProcess) : 'N/A'}</p>
         {audios.map((audio, index) => (
           <Audio key={index}>
             <div className="audio">
@@ -43,7 +61,7 @@ export const Result = () => {
                 audio.classification ? "true" : "false"
               }`}
             >
-              {audio.classification ? "Verdadeiro" : "Falso"}
+              {audio.classification ? "Humano" : "Sintético"}
             </div>
             <div className="accuracy">{audio.accuracy}%</div>
           </Audio>
