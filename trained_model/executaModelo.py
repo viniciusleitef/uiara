@@ -47,7 +47,7 @@ def segmented_extract_features(filepath):
       mfccs_mean = np.mean(mfccs.T, axis=0)
       return mfccs_mean, length
 
-def analyzingAudio(filePath):
+async def analyzingAudio(filePath):
    # Carregar o modelo treinado
     model_path = '/content/drive/MyDrive/DetectAI/Modelos/v5.0.h5'
     model = load_model(model_path)
