@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import librosa
+import wave
 from tensorflow.keras.models import load_model
 
 # Função que calcula tamanho do arquivo
@@ -46,13 +47,13 @@ def segmented_extract_features(filepath):
       mfccs_mean = np.mean(mfccs.T, axis=0)
       return mfccs_mean, length
 
-async def analyzingAudio(filePath):
+def analyzingAudio(filePath):
    # Carregar o modelo treinado
-    model_path = 'trained_model/audio_classification_model_5.0.h5'
+    model_path = '/content/drive/MyDrive/DetectAI/Modelos/v5.0.h5'
     model = load_model(model_path)
 
     # Extrair características MFCC do arquivo de áudio
-    features = segmented_extract_features(filePath)
+    features, length = segmented_extract_features(filePath)
 
     if length>segment_duration:
         predictions = []
@@ -67,9 +68,9 @@ async def analyzingAudio(filePath):
         predicted_class = 'Real'
 
     else:
-        X = features.reshape(1, features.shape[0], 1)
-        prediction = model.predict(X)                                               # Fazer a previsão com o modelo carregado
-        predicted_class = "Real" if prediction <= 0.5 else "Fake"                   # Decodificar a classe prevista
+          X = features.reshape(1, features.shape[0], 1)
+          prediction = model.predict(X)                                               # Fazer a previsão com o modelo carregado
+          predicted_class = "Real" if prediction <= 0.5 else "Fake"                   # Decodificar a classe prevista
 
     # Imprimir o resultado
     print(f"Predicao: {prediction}, Classe predita: {predicted_class}")
