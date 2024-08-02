@@ -1,3 +1,4 @@
+import uvicorn 
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -11,7 +12,7 @@ from routes.trained_models_routes import router as trained_models_routes
 Base.metadata.create_all(bind=engine) 
 app = FastAPI()
 
-origins = ['*', 'http://localhost:8000']
+origins = ['*']
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -31,3 +32,13 @@ def create_status(db: Session = Depends(get_db)):
 @app.get("/")
 async def root():
     return {"message": "Hello world!"}
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app", 
+        host="0.0.0.0", 
+        #host="192.168.0.117", 
+        port=8302, 
+        #ssl_keyfile="/usr/local/share/ca-certificates/private.key", 
+        #ssl_certfile="/usr/local/share/ca-certificates/certificate.crt"
+    )
