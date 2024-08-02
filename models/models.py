@@ -67,17 +67,3 @@ class TrainedModels(Base):
 
     __table_args__ = (UniqueConstraint('model_name', 'version', name='uix_model_version'),)
     password: Mapped[str] = mapped_column(String, nullable=False, unique=False)
-
-class TrainedModels(Base):
-    __tablename__ = 'trained_models'
-
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    model_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    version: Mapped[str] = mapped_column(String(30), nullable=False)
-    description: Mapped[str] = mapped_column(String(255))
-    file_path: Mapped[str] = mapped_column(String(255))
-    accuracy: Mapped[float] = mapped_column(Float)
-    loss: Mapped[float] = mapped_column(Float)
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-
-    __table_args__ = (UniqueConstraint('model_name', 'version', name='uix_model_version'),)
