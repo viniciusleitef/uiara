@@ -7,7 +7,7 @@ from controller.statusController import create_status_db
 
 from routes.process_routes import router as process_routes
 from routes.audio_routes import router as audio_routes
-# from routes.trained_models_routes import router as trained_models_routes
+from routes.trained_models_routes import router as trained_models_routes
 from routes.user_routes import router as users_routes
 
 # Base.metadata.create_all(bind=engine) 
@@ -24,7 +24,7 @@ app.add_middleware(
 
 app.include_router(process_routes)
 app.include_router(audio_routes)
-# app.include_router(trained_models_routes)
+app.include_router(trained_models_routes)
 app.include_router(users_routes)
 
 @app.post("/createStatus")
@@ -36,6 +36,7 @@ async def root():
     return {"message": "Hello world!"}
 
 if __name__ == "__main__":
+    # uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
     uvicorn.run(
         "main:app", 
         host="0.0.0.0", 
