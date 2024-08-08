@@ -6,6 +6,7 @@ from datetime import datetime
 from sqlalchemy import desc
 from controller.audioController import get_audios_by_process_id_db, delete_audios_db
 from controller.services import get_process_by_numprocess_db, update_all_processes_status_db
+from controller.statusController import get_all_status_db
 import shutil
 import os
 
@@ -47,6 +48,8 @@ async def create_process_db(process, db):
     return new_process
 
 def create_process(process:ProcessSchema, status_id:int, db:Session):
+    if not get_all_status_db(db):
+        raise HTTPException(status_code=400, detail="Tabela status precisa ser criada")
     new_process = Process(
         status_id = status_id,
         num_process = process.num_process,
