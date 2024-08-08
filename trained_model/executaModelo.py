@@ -3,6 +3,7 @@ import numpy as np
 import librosa
 import wave
 from tensorflow.keras.models import load_model
+from controller.trainedModelsController import get_active_models_filepath
 
 # Função que calcula tamanho do arquivo
 def tamanho_em_segundos(caminho_arquivo):
@@ -26,9 +27,9 @@ def extract_features(filepath):
     mfccs_mean = np.mean(mfccs.T, axis=0)
     return mfccs_mean
 
-def analyzingAudio(filePath):
-   # Carregar o modelo treinado
-    model_path = 'audio_classification_model_5.0.h5'
+async def analyzingAudio(filePath, model_path):
+    # Carregar o modelo treinado
+
     model = load_model(model_path)
 
     # Extrair características MFCC do arquivo de áudio

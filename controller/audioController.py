@@ -12,6 +12,7 @@ import io
 import os
 
 from controller.services import get_process_by_numprocess_db, get_audio_by_url_db, get_audio_by_id_db, update_process_status, update_process_date_db, get_process_by_process_id
+from controller.trainedModelsController import get_active_models_filepath
 
 from trained_model.executaModelo import analyzingAudio
 
@@ -45,13 +46,13 @@ async def get_audioFile(audio_id: int, db:Session):
 
 async def create_audio_db(num_process:str, db: Session, files: List[UploadFile]):
 
+    ai_model = get_active_models_filepath(db)
     process = get_process_by_numprocess_db(num_process, db)
     errors = []
     audiosRegistered = []
 
     for i, file in enumerate(files):
         fileLocation = f"{BASE_FILE_PATH}/Process_{process.id}/{file.filename}"
-
         audio = get_audio_by_url_db(fileLocation, db)
 
         if audio and audio.url == fileLocation:
@@ -77,6 +78,7 @@ async def create_audio_db(num_process:str, db: Session, files: List[UploadFile])
 
         new_audio = Audio(
             process_id=process.id,
+            trained_model_id = ai_model.id,
             title=file.filename,
             url=fileLocation,
             audio_duration=audio_duration,
@@ -88,7 +90,7 @@ async def create_audio_db(num_process:str, db: Session, files: List[UploadFile])
         db.commit()
         db.refresh(new_audio)
 
-        prediction, predicted_class = await analyzingAudio(fileLocation)
+        prediction, predicted_class = await analyzingAudio(fileLocation, ai_model.file_path)
         update_audio_db(fileLocation, prediction, predicted_class, db)
         update_process_status(process, db)
 
