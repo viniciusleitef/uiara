@@ -1,0 +1,11 @@
+
+> vite-project@0.0.0 dev
+> vite
+
+Port 8301 is in use, trying another one...
+Port 8302 is in use, trying another one...
+Port 8303 is in use, trying another one...
+
+  VITE v5.2.13  ready in 85 ms
+
+  ➜  Local:   http://127.0.0.1:8304/

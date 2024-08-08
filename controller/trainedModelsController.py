@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, UploadFile
 from sqlalchemy.orm import Session
 from datetime import datetime
 import os
@@ -7,28 +7,41 @@ from schemas.TrainedModels import TrainedModelsSchema
 
 from config import BASE_TRAINED_MODELS_PATH
 
-async def create_model_version_db(model_version: TrainedModelsSchema, db: Session):
+def get_active_model(db: Session):
+    return db.query(TrainedModels).filter(TrainedModels.status == True).first()
+
+def get_active_models_filepath(db: Session):
+    model = get_active_model(db)
+    if model is None:
+        raise HTTPException(status_code=404, detail="No active AI_model found")
+
+    return model
+
+async def create_model_version_db(model_version: TrainedModelsSchema, file: UploadFile,db: Session):
     db_model_version = db.query(TrainedModels).filter(
-        TrainedModels.model_name == model_version.model_name,
+        TrainedModels.model_name == file.filename,
         TrainedModels.version == model_version.version
     ).first()
     
     if db_model_version is not None:
         raise HTTPException(status_code=400, detail="Model version already exists")
     
-    model_version_id = create_model_version(model_version, db)
-    create_model_version_dir(model_version_id, BASE_TRAINED_MODELS_PATH)
+    filename = file.filename
+    update_model_status(db)
+    file_path = create_model_version_dir(file, BASE_TRAINED_MODELS_PATH)
+    create_model_version(model_version, filename, file_path, db)
 
     return {'message': 'Model version created successfully'}
 
-def create_model_version(model_version: TrainedModelsSchema, db: Session):
+def create_model_version(model_version: TrainedModelsSchema, filename:str, file_path:str, db: Session):
     new_model_version = TrainedModels(
-        model_name=model_version.model_name,
+        model_name=filename,
         version=model_version.version,
         description=model_version.description,
-        file_path=model_version.file_path,
-        accuracy=model_version.accuracy,
-        loss=model_version.loss,
+        file_path= file_path,
+        accuracy= None,
+        loss=None,
+        status = True,
         created_at=datetime.now(),
         updated_at=datetime.now()
     )
@@ -39,10 +52,47 @@ def create_model_version(model_version: TrainedModelsSchema, db: Session):
     
     return new_model_version.id
 
-def create_model_version_dir(model_version_id: int, base_file_path: str):
-    model_version_dir = f"{base_file_path}/Model_{model_version_id}"
+def create_model_version_dir(file: UploadFile, base_file_path: str):
+    model_version_dir = os.path.join(base_file_path, "Models")
+    
+    # Cria o diretório se ele não existir
     try:
         os.makedirs(model_version_dir, exist_ok=True)
         print(f"Directory '{model_version_dir}' created successfully!")
     except Exception as e:
         print(f"An error occurred while creating the directory: {e}")
+        return
+    
+    file_path = os.path.join(model_version_dir, file.filename)
+
+    # Salva o arquivo no diretório criado
+    try:
+        with open(file_path, "wb") as buffer:
+            buffer.write(file.file.read())
+        print(f"File '{file.filename}' saved successfully in '{file_path}'!")
+        return file_path
+    except Exception as e:
+        print(f"An error occurred while saving the file: {e}")
+
+def update_model_version_db(model_version_id: int, db:Session):
+    model_version = db.query(TrainedModels).filter(TrainedModels.id == model_version_id).first()
+    if model_version is None:
+        raise HTTPException(status_code=404, detail="Model version not found")
+    
+    model_version.status = not model_version.status
+    model_version.updated_at = datetime.now()
+
+    db.commit()
+    db.refresh(model_version)
+
+    return {'message': 'Model version status updated successfully'}
+
+def update_model_status(db: Session):
+    models_to_update = db.query(TrainedModels).filter(TrainedModels.status == True).all()
+    if models_to_update:
+        for model in models_to_update:
+            model.status = False
+            model.updated_at = datetime.now()
+
+            db.commit()
+            db.refresh(model)

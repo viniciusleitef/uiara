@@ -18,6 +18,10 @@ class Validation():
         if not file.filename.endswith(('.wav')):
             raise HTTPException(status_code=400, detail="Invalid file type")
         
+    def is_h5(file:UploadFile):
+        if not file.filename.endswith(('.h5')):
+            raise HTTPException(status_code=400, detail="Invalid file type")
+        
     def has_process(numprocess:str, db):
         process = get_process_by_numprocess_db(numprocess, db)
         if not process:

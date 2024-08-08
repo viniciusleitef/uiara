@@ -1,7 +1,10 @@
 from database import Base
 from sqlalchemy import String, Integer, Boolean, Float, Date, DateTime, ForeignKey, UniqueConstraint, func
+from sqlalchemy import String, Integer, Boolean, Float, DateTime, ForeignKey, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
+from datetime import datetime
+
 
 class Status(Base):
     __tablename__ = "status"
@@ -15,6 +18,7 @@ class Audio(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     process_id: Mapped[int] = mapped_column(Integer, ForeignKey("process.id"), nullable=False)
+    trained_model_id: Mapped[int] = mapped_column(Integer, ForeignKey("trained_models.id"), nullable=True)
     title: Mapped[str] = mapped_column(String, nullable=False)
     url: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     classification: Mapped[bool] = mapped_column(Boolean, nullable=True)
@@ -24,6 +28,7 @@ class Audio(Base):
     snr: Mapped[float] = mapped_column(Float, nullable=False, unique= False)
 
     process = relationship("Process", back_populates="audio")
+    trained_model = relationship("TrainedModels", back_populates="audio")
 
 class Process(Base):
     __tablename__ = 'process'
@@ -33,8 +38,8 @@ class Process(Base):
     title: Mapped[str] = mapped_column(String, nullable=False)
     num_process: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     responsible: Mapped[str] = mapped_column(String, nullable=False)
-    created_at: Mapped[str] = mapped_column(Date)
-    updated_at: Mapped[str] = mapped_column(Date)
+    created_at: Mapped[datetime] = mapped_column(DateTime)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     
     status = relationship("Status", back_populates="process")
     audio = relationship("Audio", back_populates="process")
@@ -59,11 +64,14 @@ class TrainedModels(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     model_name: Mapped[str] = mapped_column(String(255), nullable=False)
     version: Mapped[str] = mapped_column(String(30), nullable=False)
-    description: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str] = mapped_column(String(255), nullable=True)
     file_path: Mapped[str] = mapped_column(String(255))
-    accuracy: Mapped[float] = mapped_column(Float)
-    loss: Mapped[float] = mapped_column(Float)
+    accuracy: Mapped[float] = mapped_column(Float, nullable=True)
+    loss: Mapped[float] = mapped_column(Float, nullable=True)
+    status: Mapped[bool] = mapped_column(Boolean, default=False, server_default='0')
     created_at: Mapped[str] = mapped_column(Date)
     updated_at: Mapped[str] = mapped_column(Date)
+
+    audio = relationship("Audio", back_populates="trained_model")
 
     __table_args__ = (UniqueConstraint('model_name', 'version', name='uix_model_version'),)

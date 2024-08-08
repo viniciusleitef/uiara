@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   ButtonFooter,
   Fields,
@@ -23,9 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { BackPage } from "../../components/BackPage";
 import { AudioProps } from "../../types";
 import InputMask from 'react-input-mask';
-import { GiConsoleController } from "react-icons/gi";
 import React from 'react';
-
 
 export const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -163,7 +161,6 @@ export const Upload = () => {
         setIsUploading(false);
         return;
       }
-      
       const processPayLoad: ProcessPayload = {
         title: title,
         num_process: cleanedProcessNumber,
@@ -206,29 +203,30 @@ export const Upload = () => {
         <Fields>
           <Box display="flex" gap={2}>
           <InputMask
-            mask="9999999-99.9999.9.99.9999"
-            value={processNumber}
-            onChange={handleChange}
-            disabled={process}
-          >
-            {(inputProps: any) => (
-              <TextField
-                {...inputProps}
-                label="Número do Processo"
-                variant="outlined"
-                fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">#</InputAdornment>
-                  ),
-                }}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                disabled={process}
-              />
-            )}
-          </InputMask>
+              mask="9999999-99.9999.9.99.9999"
+              value={processNumber}
+              onChange={handleChange}
+              disabled={process}
+            >
+              {((inputProps: any): ReactNode => (
+                <TextField
+                  {...inputProps}
+                  label="Número do Processo"
+                  variant="outlined"
+                  fullWidth
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">#</InputAdornment>
+                    ),
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  disabled={process}
+                />
+              ))as unknown as ReactNode}
+            </InputMask>
+            
             <TextField
               label="Responsável"
               variant="outlined"

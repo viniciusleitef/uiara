@@ -1,8 +1,7 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-const api = axios.create({
-  baseURL: "http://localhost:8000", //http://150.165.167.12:8300/
+export const api = axios.create({
+  baseURL: "https://78ca91a7ce7e49ec8aec7b3ab241e98a.serveo.net"
 });
 
 api.interceptors.request.use(
