@@ -13,10 +13,9 @@ from routes.user_routes import router as users_routes
 # Base.metadata.create_all(bind=engine) 
 app = FastAPI()
 
-origins = ['*']
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=['*'],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -36,12 +35,9 @@ async def root():
     return {"message": "Hello world!"}
 
 if __name__ == "__main__":
-    # uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
     uvicorn.run(
-        "main:app", 
+        app=app, 
         host="0.0.0.0", 
-        #host="192.168.0.117", 
-        port=8302, 
-        #ssl_keyfile="/usr/local/share/ca-certificates/private.key", 
-        #ssl_certfile="/usr/local/share/ca-certificates/certificate.crt"
+        port=8302,
+        reload=False
     )

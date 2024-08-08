@@ -1,0 +1,11 @@
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY ./vite /app
+
+RUN npm i && npm run build
+
+EXPOSE 8301
+
+CMD [ "npm", "run", "preview" ]

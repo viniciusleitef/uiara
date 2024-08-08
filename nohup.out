@@ -1,4 +1,0 @@
-Usage: uvicorn [OPTIONS] APP
-Try 'uvicorn --help' for help.
-
-Error: Got unexpected extra arguments (port 8300)
