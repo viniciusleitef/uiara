@@ -48,6 +48,10 @@ class User(Base):
     hashed_password: Mapped[str] = mapped_column(String, nullable=False, unique=False)
     created_at: Mapped[str] = mapped_column(Date)
     updated_at: Mapped[str] = mapped_column(Date)
+    login_verification_code = mapped_column(String(30), nullable=True)
+    login_verification_expires_at = mapped_column(DateTime(timezone=True), nullable=True)
+    is_verified = mapped_column(Boolean, default=False)
+    last_login = mapped_column(DateTime, nullable=True)
 
 class TrainedModels(Base):
     __tablename__ = 'trained_models'

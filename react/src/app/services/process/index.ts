@@ -1,4 +1,4 @@
-import { api } from "..";
+import api from "..";
 import { ProcessPayload } from "./types";
 
 class ProcessService {

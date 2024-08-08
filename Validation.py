@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import UploadFile, HTTPException
-from controller.services import get_process_by_numprocess_db, get_audio_by_url_db, get_audio_by_id_db, get_user_by_email_db
+from controller.services import get_process_by_numprocess_db, get_audio_by_url_db, get_audio_by_id_db, get_user_by_email_db, get_user_by_id_db
 
 class Validation():
     
@@ -27,3 +27,8 @@ class Validation():
         user = get_user_by_email_db(email, db)
         if user:
             raise HTTPException(status_code=400, detail="Email already exists")
+        
+    def has_user(user_id: str, db:Session):
+        user = get_user_by_id_db(user_id, db)
+        if not user:
+            raise HTTPException(status_code=400, detail="User does not exists")

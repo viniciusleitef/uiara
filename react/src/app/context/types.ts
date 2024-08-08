@@ -1,7 +1,8 @@
 export interface AuthContextData {
   user: UserProps | null;
   setUser: (user: UserProps) => void;
-  signIn: (email: string, password: string) => Promise<void>;
+  signInStepOne: (email: string, password: string, captchaToken: string) => Promise<void>;
+  signInStepTwo: (email: string, password: string, captchaToken: string) => Promise<void>;
   signOut: () => void;
 }
 

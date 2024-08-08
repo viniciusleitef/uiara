@@ -76,3 +76,6 @@ def update_all_processes_status_db(db:Session):
 
 def get_user_by_email_db(email, db:Session):
     return db.query(User).filter(User.email == email).first()
+
+def get_user_by_id_db(user_id, db:Session):
+    return db.query(User).filter(User.id == user_id).first()
