@@ -1,0 +1,22 @@
+services:
+  fastapi:
+    container_name: detectai_fastapi
+    image: detectai_fastapi_image:latest
+    ports:
+      - 8302:8302
+    volumes:
+      - shared_env:/app/env
+  vite:
+    container_name: detectai_vite
+    depends_on:
+      - fastapi
+    image: detectai_vite_image:latest
+    environment:
+      - NGROK_AUTH_TOKEN=${NGROK_AUTH_TOKEN}
+    ports:
+      - 8301:8301
+    volumes:
+      - shared_env:/app/env
+
+volumes:
+  shared_env:

@@ -1,15 +1,14 @@
 import axios from "axios";
 
 export const api = axios.create({
-  //baseURL: "http://localhost:8000/"
-  baseURL: "https://78ca91a7ce7e49ec8aec7b3ab241e98a.serveo.net"
+  baseURL: import.meta.env.VITE_API_URL
 });
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('jwtToken'); 
+    const token = localStorage.getItem('jwtToken');
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`; 
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },

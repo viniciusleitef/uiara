@@ -1,6 +1,6 @@
 # fastapi
 __pycache__/
-.env
+.env.*
 
 # vite
 .firebase

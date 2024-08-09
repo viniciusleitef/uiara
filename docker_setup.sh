@@ -5,9 +5,13 @@ if [[ "$1" == "build" ]]; then
     sudo docker build -t detectai_vite_image -f docker/Dockerfile.vite .
 fi
 
-if [[ "$1" == "run" ]]; then  
-    sudo docker run --name detectai_fastapi -p 8302:8302 -d detectai_fastapi_image
-    sudo docker run --name detectai_vite -p 8301:8301 -d detectai_vite_image
+if [[ "$1" == "up" && "$2" ]]; then
+    echo $2
+    NGROK_AUTH_TOKEN=$2 sudo docker compose -f docker/docker-compose.yaml up -d
+fi
+
+if [[ "$1" == "down" ]]; then  
+    sudo docker compose -f docker/docker-compose.yaml down
 fi
 
 if [[ "$1" == "remove" ]]; then  

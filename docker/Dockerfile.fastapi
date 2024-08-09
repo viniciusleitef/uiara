@@ -4,10 +4,16 @@ WORKDIR /app
 
 COPY ./fastapi/requirements.txt ./requirements.txt
 
-RUN pip install -r ./requirements.txt
+RUN pip install --no-cache-dir -r ./requirements.txt
+
+RUN mkdir -p /app/env
 
 COPY ./fastapi /app
 
+COPY ./docker/entrypoint_fastapi.sh /app/
+
+RUN chmod +x /app/entrypoint_fastapi.sh
+
 EXPOSE 8302
 
-CMD ["fastapi", "run", "main.py", "--port", "8302"]
+CMD ["/app/entrypoint_fastapi.sh"]

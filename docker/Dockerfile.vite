@@ -4,7 +4,10 @@ WORKDIR /app
 
 COPY ./vite /app
 
-RUN npm i && npm run build
+RUN npm i && \
+    npm run build && \
+    echo "API_URL=$(cat /app/env/url_serveo.txt)" | grep -o 'https://[^ ]*.serveo.net' | head -n 1 >> .env.production && \
+    echo "NGROK_AUTH_TOKEN=${NGROK_AUTH_TOKEN}" >> .env.production
 
 EXPOSE 8301
 
