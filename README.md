@@ -10,7 +10,6 @@ npm run dev
 ./vite/.env.production
 
 ```sh
-NGROK_AUTH_TOKEN=...
 VITE_API_URL=...
 ```
 
@@ -26,4 +25,16 @@ python3 main.py
 
 ```sh
 150.165.167.12
+```
+
+.env
+
+```sh
+NGROK_AUTH_TOKEN=...
+```
+
+to see the frontend url
+
+```sh
+docker logs detectai_vite
 ```

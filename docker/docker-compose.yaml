@@ -11,6 +11,8 @@ services:
     depends_on:
       - fastapi
     image: detectai_vite_image:latest
+    env_file:
+      - ../.env
     ports:
       - 8301:8301
     volumes:
