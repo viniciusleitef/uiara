@@ -24,7 +24,9 @@ make build      # to install images
 
 make up         # to run containers from images
 
-make vite       # to log vite container and ngrok URL
+make ngrok      # to get ngrok url (cold start of 30s)
+
+make vite       # to log vite container
 
 make fastapi    # to log fastapi container
 

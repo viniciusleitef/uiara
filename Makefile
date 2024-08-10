@@ -9,6 +9,10 @@ build:
 up:
 	sudo docker compose -f docker/docker-compose.yaml up -d
 
+.PHONY: ngrok
+ngrok:
+	make vite | grep -o 'https://[^ ]*.ngrok-free.app'
+
 .PHONY: vite
 vite:
 	docker logs detectai_vite
@@ -28,3 +32,9 @@ remove:
 
 	sudo docker rmi detectai_fastapi_image
 	sudo docker rmi detectai_vite_image
+
+.PHONY: update
+update:
+	make remove
+	make build
+	make up
