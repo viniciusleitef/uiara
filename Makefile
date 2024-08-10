@@ -9,6 +9,14 @@ build:
 up:
 	sudo docker compose -f docker/docker-compose.yaml up -d
 
+.PHONY: vite
+vite:
+	docker logs detectai_vite
+
+.PHONY: fastapi
+fastapi:
+	docker logs detectai_fastapi
+
 .PHONY: down
 down:
 	sudo docker compose -f docker/docker-compose.yaml down

@@ -17,22 +17,20 @@ prereqs
 NGROK_AUTH_TOKEN=...
 ```
 
-to see the frontend url
-
-```sh
-docker logs detectai_vite
-```
-
 commands
 
 ```sh
-make build  # to install images 
+make build      # to install images 
 
-make up     # to run containers from images
+make up         # to run containers from images
 
-make down   # to remove containers
+make vite       # to log vite container and ngrok URL
 
-make remove # to remove image and containers
+make fastapi    # to log fastapi container
+
+make down       # to remove containers
+
+make remove     # to remove image and containers
 ```
 
 # Manual local setup
@@ -56,8 +54,6 @@ VITE_API_URL=...
 ```
 
 ## Fastapi
-
-run
 
 ```sh
 cd fastapi
