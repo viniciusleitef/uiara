@@ -2,13 +2,13 @@ FROM python:3.12-bullseye
 
 WORKDIR /app
 
+COPY ./fastapi /app
+
 COPY ./fastapi/requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir -r ./requirements.txt
 
 RUN mkdir -p /app/env
-
-COPY ./fastapi /app
 
 COPY ./docker/entrypoint_fastapi.sh /app/
 

@@ -4,11 +4,12 @@ WORKDIR /app
 
 COPY ./vite /app
 
-RUN npm i && \
-    npm run build && \
-    echo "API_URL=$(cat /app/env/url_serveo.txt)" | grep -o 'https://[^ ]*.serveo.net' | head -n 1 >> .env.production && \
-    echo "NGROK_AUTH_TOKEN=${NGROK_AUTH_TOKEN}" >> .env.production
-
 EXPOSE 8301
 
-CMD [ "npm", "run", "preview" ]
+RUN npm i
+
+COPY ./docker/entrypoint_vite.sh /app/
+
+RUN chmod +x /app/entrypoint_vite.sh
+
+CMD [ "/app/entrypoint_vite.sh" ] 

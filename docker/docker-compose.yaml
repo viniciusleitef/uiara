@@ -11,8 +11,6 @@ services:
     depends_on:
       - fastapi
     image: detectai_vite_image:latest
-    environment:
-      - NGROK_AUTH_TOKEN=${NGROK_AUTH_TOKEN}
     ports:
       - 8301:8301
     volumes:
