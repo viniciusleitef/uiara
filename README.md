@@ -14,13 +14,21 @@ prereqs
 .env
 
 ```sh
+EMAIL_USER=...
+EMAIL_PASS=...
+
+CHAVE_DO_SITE=...
+CHAVE_SECRETA_CAPTCHA=...
+
+SECRET_KEY=...
+
 NGROK_AUTH_TOKEN=...
 ```
 
 commands
 
 ```sh
-make build      # to install images 
+make build      # to install images
 
 make up         # to run containers from images
 
@@ -49,7 +57,7 @@ cd vite
 npm run preview
 ```
 
-./vite/.env.production
+vite/.env.production
 
 ```sh
 VITE_API_URL=...
