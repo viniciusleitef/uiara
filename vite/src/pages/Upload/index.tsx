@@ -97,7 +97,7 @@ export const Upload = () => {
   };
 
   const uploadAllFiles = async () => {
-
+    
     const cleanedProcessNumber = cleanProcessNumber(processNumber);
 
     if (process){
@@ -193,7 +193,7 @@ export const Upload = () => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProcessNumber(e.target.value);
+    setProcessNumber(cleanProcessNumber(e.target.value));
   };
 
   return (
@@ -201,7 +201,7 @@ export const Upload = () => {
       <BackPage />
       <UploadContainer>
         <Fields>
-          <Box display="flex" gap={2}>
+          <Box display="flex" gap={2} flexDirection={{ xs: 'column', md: 'row' }}>
           <InputMask
               mask="9999999-99.9999.9.99.9999"
               value={processNumber}
@@ -339,7 +339,7 @@ export const Upload = () => {
             color="primary"
             onClick={uploadAllFiles}
             disabled={
-              !isModified || !processNumber || !responsible || !title
+              !isModified || !((processNumber).length==20) || !responsible || !title || !files.length
             }
           >
             Enviar Processo

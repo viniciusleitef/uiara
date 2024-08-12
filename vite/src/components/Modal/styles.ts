@@ -17,8 +17,9 @@ export const ModalContent = styled.div`
   background-color: ${colors.white};
   border-radius: 8px;
   box-shadow: 0 70px 100px rgba(0, 0, 0, 0.1);
-  height: 350px;
-  width: 550px;
+  min-height: 400px;
+  width: 75%;
+  max-width: 600px;
   padding: 20px;
   overflow-y: auto;
 `;
@@ -40,13 +41,13 @@ export const Title = styled.h1`
 `;
 
 export const Developer = styled.a`
-  font-size: 16px;
+  font-size: 14px;
   color: ${colors.primary};
   font-weight: 700;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 40px;
+  margin-top: 1rem;
   transition: 0.3s;
   cursor: pointer;
 
