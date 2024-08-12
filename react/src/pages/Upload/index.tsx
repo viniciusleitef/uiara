@@ -109,7 +109,6 @@ export const Upload = () => {
         try {
           const deletePromises = audiosToDelete.map(audio => audioService.deleteAudio(audio.id));
           const audioResponses = await Promise.all(deletePromises);
-          console.log(audioResponses);
         } catch (error) {
           console.error("Error deleting audio files:", error);
           setErrorMessage("Erro ao excluir os arquivos");
@@ -177,9 +176,6 @@ export const Upload = () => {
 
       const audioResponse = await audioService.postAudio(formData);
       const audioResponseData = audioResponse.data
-      console.log(audioResponseData)
-
-      console.log(audioResponseData)
 
       navigate(`/result/${cleanedProcessNumber}`, { state: { audioResponseData } });
       setFiles([]);
@@ -339,7 +335,7 @@ export const Upload = () => {
             color="primary"
             onClick={uploadAllFiles}
             disabled={
-              !isModified || !((processNumber).length==20) || !responsible || !title || !files.length
+              !isModified || !((processNumber).length==20) || !responsible || !title || !(files.length || existingFiles.length)
             }
           >
             Enviar Processo
