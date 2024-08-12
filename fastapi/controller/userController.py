@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from models.models import User
 from datetime import datetime, timezone
-from utils.email import send_verification_email
+from utils.email import send_verification_email, send_forgot_password_code_email
 from utils.auth import generate_verification_code, create_jwt_token, verify_jwt_token, generate_expiration_time
 import bcrypt
 
@@ -108,4 +108,49 @@ def login_user_step_two_db(verification_code: str, user: UserSchema, db: Session
             else:
                 raise HTTPException(status_code=400, detail="Código de verificação inválido.")
         raise HTTPException(status_code=400, detail="Senha inválida.")
+    raise HTTPException(status_code=400, detail="Usuário não existe.")
+
+def forgot_password_user_step_one(user_email: str, db: Session):
+    print("forgot password one", user_email)
+
+    db_user = db.query(User).filter(User.email == user_email.email).first()
+    if db_user:
+        verification_expiration_time = generate_expiration_time()
+        verification_code = generate_verification_code()
+
+        db_user.login_verification_code = verification_code
+        db_user.login_verification_expires_at = verification_expiration_time
+        
+        db.commit()
+        db.refresh(db_user)
+
+        try:
+            send_forgot_password_code_email(user_email, verification_code)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail="Erro enviando código de verificação. Tente novamente.")
+        return {"message": "Verification code successfully sent to user's email"}
+    raise HTTPException(status_code=400, detail="Usuário não existe.")
+
+def forgot_password_user_step_two(user_email: str, verification_code: str, db: Session):
+    print("forgot password step two")
+
+    db_user = db.query(User).filter(User.email == user_email.email).first()
+    if db_user:
+        if db_user.login_verification_code == verification_code:
+            return {'message': 'Verification code correct'}
+        raise HTTPException(status_code=500, detail="Código de verificação incorreto.")
+    raise HTTPException(status_code=400, detail="Usuário não existe.")
+
+def forgot_password_user_step_three(user_email: str, new_password: str, db: Session):
+    print("forgot password step three")
+
+    db_user = db.query(User).filter(User.email == user_email.email).first()
+    if db_user:
+        new_password_hashed = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
+        new_password_hashed = new_password_hashed.decode('utf-8')     
+        db_user.hashed_password = new_password_hashed
+
+        db.commit()
+        db.refresh(db_user)
+        return {'message': 'Password updated successfully'}
     raise HTTPException(status_code=400, detail="Usuário não existe.")

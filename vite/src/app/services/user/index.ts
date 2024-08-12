@@ -61,6 +61,44 @@ class UserService {
             throw error;
           }
     }
+
+    async forgotPasswordStepOne(userEmail: string) {
+        try {
+            const payload = {
+                user_email: userEmail
+            }
+            const response = await api.post('/forgot-password-one', payload);
+            return response;
+          } catch (error) {
+            throw error;
+          }
+    }
+
+    async forgotPasswordStepTwo(userEmail: string, verificationCode: string) {
+        try {
+            const payload = {
+                user_email: userEmail,
+                verification_code: verificationCode
+            };
+            const response = await api.post('/forgot-password-two', payload);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async forgotPasswordStepThree(userEmail: string, newPassword: string) {
+        try {
+            const payload = {
+                user_email: userEmail,
+                new_password: newPassword
+            };
+            const response = await api.post('/forgot-password-three', payload);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+        }
 }
 
 const userService = new UserService();

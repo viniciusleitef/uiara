@@ -6,6 +6,7 @@ import VpnKey from "@mui/icons-material/VpnKey";
 import { AuthContext } from "../../app/context/AuthContext";
 import { StyledInput } from "../../styles/input";
 import LoginIcon from "@mui/icons-material/Login";
+import SendIcon from '@mui/icons-material/Send';
 import ReCAPTCHA from "react-google-recaptcha";
 import { Modal } from "../../components/Modal";
 
@@ -22,6 +23,16 @@ export const Login = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [secondStep, setSecondStep] = useState<boolean>(false);
   const [errorVerification, setErrorVerification] = useState<string | null>(null);
+
+  const [forgotPasswordModal, setForgotPasswordModal] = useState<boolean>(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+
+  const [forgotPasswordModalSecondStep, setForgotPasswordModalSecondStep] = useState<boolean>(false);
+  const [forgotVerificationCode, setForgotVerificationCode] = useState<string>("");
+
+  const [forgotPasswordModalThirdStep, setForgotPasswordModalThirdStep] = useState<boolean>(false);
+  const [forgotNewPassword, setForgotNewPassword] = useState<string>("");
+  const [forgotConfirmNewPassword, setForgotConfirmNewPassword] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -65,6 +76,24 @@ export const Login = () => {
     setCaptchaToken(token);
   };
 
+  const handleSubmitForgotPasswordStepOne = () => {
+    // Logic to send code to email
+    
+    //
+    setForgotPasswordModalSecondStep(true);
+    setForgotPasswordModal(false);
+  };
+
+  const handleSubmitForgotPasswordStepTwo = () => {
+    // Logic to check if code is correct
+    setForgotPasswordModalThirdStep(true);
+    setForgotPasswordModalSecondStep(false);
+  };
+
+  const handleSubmitForgotPasswordStepThree = () => {
+    setForgotPasswordModalThirdStep(false);
+  };
+
   return (
     <LoginContainer>
       <form onSubmit={handleSubmitStepOne}>
@@ -88,11 +117,16 @@ export const Login = () => {
             required
           />
         </div>
+        <div className="forgotPasswordOuterContainer">
+          <div onClick={() => setForgotPasswordModal(true)} className="forgotPasswordContainer">
+            <p className="forgotPasswordText">Esqueci a senha / Primeiro acesso</p>
+          </div>
+        </div>
         <ReCAPTCHA
           sitekey={chave_do_site}
           onChange={handleCaptchaChange}
         />
-        {loading && <p>Carregando...</p>} {/* Loading indicator */}
+        {loading && <p>Carregando...</p>} 
         {error && <p>{error}</p>}
         <button type="submit">
           <LoginIcon />
@@ -117,7 +151,73 @@ export const Login = () => {
           </form>
           </ModalContainer>
         </Modal>
-      }
+        }
+        {forgotPasswordModal &&
+        <Modal>
+          <ModalContainer>
+          <form onSubmit={handleSubmitForgotPasswordStepOne}>
+            <p>Digite o email da sua conta. Enviaremos um código para você redefinir a senha.</p>
+            <div>
+            <Person />
+            <StyledInput 
+              placeholder="Email"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+            />
+            </div>
+            <button type="submit">
+              <SendIcon />
+              Enviar
+            </button>
+            {errorVerification && <p>{errorVerification}</p>}
+          </form>
+          </ModalContainer>
+        </Modal>
+        }
+        {forgotPasswordModalSecondStep &&
+        <Modal>
+          <ModalContainer>
+          <form onSubmit={handleSubmitForgotPasswordStepTwo}>
+          <p>Um código foi enviado ao email {email}. Insira ele abaixo para continuar.</p>
+            <StyledInput 
+              placeholder="Código de verificação"
+              value={forgotVerificationCode}
+              onChange={(e) => setForgotVerificationCode(e.target.value)}
+            />
+            <button type="submit">
+              <SendIcon />
+              Continuar
+            </button>
+            {errorVerification && <p>{errorVerification}</p>}
+          </form>
+          </ModalContainer>
+        </Modal>
+        }
+        {forgotPasswordModalThirdStep &&
+        <Modal>
+          <ModalContainer>
+          <form onSubmit={handleSubmitForgotPasswordStepThree}>
+          <p>Pronto! Digite a nova senha e redefinirimos sua senha.</p>
+            <StyledInput 
+              placeholder="Nova senha"
+              value={forgotNewPassword}
+              onChange={(e) => setForgotNewPassword(e.target.value)}
+            />
+            <StyledInput 
+              placeholder="Confirmar nova senha"
+              value={forgotConfirmNewPassword}
+              onChange={(e) => setForgotConfirmNewPassword(e.target.value)}
+            />
+            <button type="submit">
+              <SendIcon />
+              Confirmar
+            </button>
+            {errorVerification && <p>{errorVerification}</p>}
+          </form>
+          </ModalContainer>
+        </Modal>
+        }
+        
     </LoginContainer>
   );
 };

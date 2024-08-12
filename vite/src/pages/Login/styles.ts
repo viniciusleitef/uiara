@@ -7,6 +7,9 @@ export const LoginContainer = styled.div`
   align-items: center;
   justify-content: center;
   height: 100%;
+  overflow-y: visible;
+  padding-top: 70px;
+  padding-bottom: 50px;
 
   form {
     width: 60%;
@@ -38,6 +41,29 @@ export const LoginContainer = styled.div`
         position: absolute;
         left: 0.7em;
       }
+    }
+
+    .forgotPasswordOuterContainer {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      display: flex;
+      justify-content: flex-end
+    }
+
+    .forgotPasswordContainer {
+      margin: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .forgotPasswordText {
+      font-size: .8rem;
+      padding: 0;
+    }
+
+    .forgotPasswordContainer:hover {
+      text-decoration: underline;
     }
   }
 `;
