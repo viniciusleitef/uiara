@@ -1,9 +1,13 @@
+# venv
+uiara
+
 # fastapi
 __pycache__/
 .env.*
 .env
 
 # vite
+react/
 .firebase
 nohup.out
 package-lock.json
