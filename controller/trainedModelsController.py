@@ -17,6 +17,9 @@ def get_active_models_filepath(db: Session):
 
     return model
 
+def get_model_by_id(model_id: int, db: Session):
+    return db.query(TrainedModels).filter(TrainedModels.id == model_id).first()
+
 async def create_model_version_db(model_version: TrainedModelsSchema, file: UploadFile,db: Session):
     db_model_version = db.query(TrainedModels).filter(
         TrainedModels.model_name == file.filename,
@@ -60,8 +63,8 @@ def create_model_version_dir(file: UploadFile, base_file_path: str):
         os.makedirs(model_version_dir, exist_ok=True)
         print(f"Directory '{model_version_dir}' created successfully!")
     except Exception as e:
-        print(f"An error occurred while creating the directory: {e}")
-        return
+        raise HTTPException(status_code=500, detail="An error occurred while creating the directory")
+
     
     file_path = os.path.join(model_version_dir, file.filename)
 
@@ -72,7 +75,8 @@ def create_model_version_dir(file: UploadFile, base_file_path: str):
         print(f"File '{file.filename}' saved successfully in '{file_path}'!")
         return file_path
     except Exception as e:
-        print(f"An error occurred while saving the file: {e}")
+            raise HTTPException(status_code=500, detail="An error occurred while saving the file")
+
 
 def update_model_version_db(model_version_id: int, db:Session):
     model_version = db.query(TrainedModels).filter(TrainedModels.id == model_version_id).first()

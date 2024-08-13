@@ -5,9 +5,6 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 
 
-def get_process_by_numprocess_db(num_process: str, db:Session):
-    return db.query(Process).filter(Process.num_process == num_process).first()
-
 # Áudios
 
 def get_audio_by_url_db(url:str, db:Session):
@@ -34,6 +31,9 @@ def get_audios_by_process_id_db(process_id:int, db:Session):
     return audioList
 
 # Process
+
+def get_process_by_numprocess_db(num_process: str, db:Session):
+    return db.query(Process).filter(Process.num_process == num_process).first()
 
 def get_process_by_process_id(process_id, db):
     return db.query(Process).filter(Process.id == process_id).first()

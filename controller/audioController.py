@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from models.models import Audio
 from pydub import AudioSegment
+from datetime import datetime
 from typing import List
 import noisereduce as nr
 import numpy as np
@@ -30,12 +31,16 @@ def get_audios_by_process_id_db(process_id:int, db:Session):
     for audio in audios:
         audioList.append({
             "id": audio.id,
+            "process_id": audio.process_id,
+            "trained_model_id": audio.trained_model_id,
             "title": audio.title,
             "classification": audio.classification,
             "accuracy": audio.accuracy,
             "audio_duration": audio.audio_duration,
             "sample_rate": audio.sample_rate,
-            "snr": audio.snr
+            "snr": audio.snr,
+            "created_at": audio.created_at,
+            "updated_at": audio.updated_at,
         })
     return audioList
 
@@ -83,7 +88,9 @@ async def create_audio_db(num_process:str, db: Session, files: List[UploadFile])
             url=fileLocation,
             audio_duration=audio_duration,
             sample_rate=sample_rate,
-            snr = snr
+            snr = snr,
+            created_at=datetime.now(),
+            updated_at=datetime.now()
         )
 
         db.add(new_audio)
@@ -97,12 +104,15 @@ async def create_audio_db(num_process:str, db: Session, files: List[UploadFile])
         audiosRegistered.append({
             "id": new_audio.id,
             "process_id": new_audio.process_id,
+            "trained_model_id": new_audio.trained_model_id,
             "title": new_audio.title,
             "classification": new_audio.classification,
             "accuracy": new_audio.accuracy,
             "audio_duration": new_audio.audio_duration,
             "sample_rate": new_audio.sample_rate,
-            "snr": new_audio.snr
+            "snr": new_audio.snr,
+            "created_at": new_audio.created_at,
+            "updated_at": new_audio.updated_at
             })
     
     return {

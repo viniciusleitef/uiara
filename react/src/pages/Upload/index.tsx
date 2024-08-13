@@ -291,6 +291,7 @@ export const Upload = () => {
                 </Typography>
         
                 <IconButton
+                  title="Deletar áudio"
                   onClick={() => removeExistingFile(file.id)}
                   aria-label="delete"
                 >
