@@ -1,11 +1,9 @@
-import React, { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { EsqueciContainer, ModalContainer } from "./styles";
 import Person from "@mui/icons-material/Person";
-import VpnKey from "@mui/icons-material/VpnKey";
 import { AuthContext } from "../../app/context/AuthContext";
 import { StyledInput } from "../../styles/input";
-import LoginIcon from "@mui/icons-material/Login";
 import SendIcon from '@mui/icons-material/Send';
 import { Modal } from "../../components/Modal";
 
