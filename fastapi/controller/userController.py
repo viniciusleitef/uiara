@@ -113,13 +113,15 @@ def login_user_step_two_db(verification_code: str, user: UserSchema, db: Session
 def forgot_password_user_step_one(user_email: str, db: Session):
     print("forgot password one", user_email)
 
-    db_user = db.query(User).filter(User.email == user_email.email).first()
+    db_user = db.query(User).filter(User.email == user_email).first()
     if db_user:
         verification_expiration_time = generate_expiration_time()
         verification_code = generate_verification_code()
 
         db_user.login_verification_code = verification_code
         db_user.login_verification_expires_at = verification_expiration_time
+
+        print("vERIFICATION CODE:", verification_code)
         
         db.commit()
         db.refresh(db_user)
@@ -134,7 +136,7 @@ def forgot_password_user_step_one(user_email: str, db: Session):
 def forgot_password_user_step_two(user_email: str, verification_code: str, db: Session):
     print("forgot password step two")
 
-    db_user = db.query(User).filter(User.email == user_email.email).first()
+    db_user = db.query(User).filter(User.email == user_email).first()
     if db_user:
         if db_user.login_verification_code == verification_code:
             return {'message': 'Verification code correct'}
@@ -144,7 +146,7 @@ def forgot_password_user_step_two(user_email: str, verification_code: str, db: S
 def forgot_password_user_step_three(user_email: str, new_password: str, db: Session):
     print("forgot password step three")
 
-    db_user = db.query(User).filter(User.email == user_email.email).first()
+    db_user = db.query(User).filter(User.email == user_email).first()
     if db_user:
         new_password_hashed = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt())
         new_password_hashed = new_password_hashed.decode('utf-8')     

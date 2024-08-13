@@ -33,7 +33,7 @@ def send_forgot_password_code_email(to_email: str, code: str):
     msg['To'] = to_email
     msg['Subject'] = 'Código para redefinir a senha'
 
-    body = f'Use o código {code} para refedinir sua senha.'
+    body = f'Use o código {code} para redefinir sua senha.'
     msg.attach(MIMEText(body, 'plain'))
 
     server = smtplib.SMTP('smtp.gmail.com', 587)

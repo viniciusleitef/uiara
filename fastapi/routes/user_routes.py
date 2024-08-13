@@ -46,13 +46,13 @@ async def verify_captcha(captcha:CaptchaSchema):
     return verify_captcha_google(captcha.token)
 
 @router.post("/forgot-password-one")
-async def forgot_password(user_email: str, db: Session = Depends(get_db)):
-    return forgot_password_user_step_two(user_email=user_email, db=db)
+async def forgot_password(user: UserSchema, db: Session = Depends(get_db)):
+    return forgot_password_user_step_one(user.email, db=db)
 
 @router.post("/forgot-password-two")
-async def forgot_password_step_two(user_email: str, verification_code: str, db: Session = Depends(get_db)):
-    return forgot_password_user_step_two(user_email=user_email, verification_code=verification_code, db=db)
+async def forgot_password_step_two(user: UserSchema, db: Session = Depends(get_db)):
+    return forgot_password_user_step_two(user_email=user.email, verification_code=user.login_verification_code, db=db)
 
 @router.post("/forgot-password-three")
-async def forgot_password_step_three(user_email: str, new_password: str, db: Session = Depends(get_db)):
-    return forgot_password_user_step_three(user_email=user_email, new_password=new_password, db=db)
+async def forgot_password_step_three(user: UserSchema, db: Session = Depends(get_db)):
+    return forgot_password_user_step_three(user_email=user.email, new_password=user.password, db=db)
