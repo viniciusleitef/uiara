@@ -4,6 +4,9 @@ export interface AuthContextData {
   signInStepOne: (email: string, password: string, captchaToken: string) => Promise<void>;
   signInStepTwo: (email: string, password: string, captchaToken: string) => Promise<void>;
   signOut: () => void;
+  forgotPasswordStepOne: (email: string) => Promise<void>;
+  forgotPasswordStepTwo: (email: string, verificationCode: string) => Promise<void>;
+  forgotPasswordStepThree: (email: string, newPassword: string) => Promise<void>;
 }
 
 export interface UserProps {

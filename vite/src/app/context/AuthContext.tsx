@@ -61,6 +61,48 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     navigate("/login");
   }, [navigate]);
 
+  const forgotPasswordStepOne = useCallback(
+    async (email: string): Promise<void> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await userService.forgotPasswordStepOne(email);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
+    [navigate]
+  );
+
+  const forgotPasswordStepTwo = useCallback(
+    async (email: string, verificationCode: string): Promise<void> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await userService.forgotPasswordStepTwo(email, verificationCode);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
+    [navigate]
+  );
+
+  const forgotPasswordStepThree = useCallback(
+    async (email: string, newPassword: string): Promise<void> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await userService.forgotPasswordStepThree(email, newPassword);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
+    [navigate]
+  );
+
   const checkTokenExpiration = useCallback(() => {
     const token = localStorage.getItem("jwtToken");
     if (token) {
@@ -82,8 +124,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       signInStepOne,
       signInStepTwo,
       signOut,
+      forgotPasswordStepOne,
+      forgotPasswordStepTwo,
+      forgotPasswordStepThree,
     }),
-    [user, setUser, signInStepOne, signInStepTwo, signOut]
+    [user, setUser, signInStepOne, signInStepTwo, signOut, forgotPasswordStepOne, forgotPasswordStepTwo, forgotPasswordStepThree]
   );
 
   return (

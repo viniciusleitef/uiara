@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import colors from "../../styles/colors";
 
-export const LoginContainer = styled.div`
+export const EsqueciContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,18 +49,20 @@ export const LoginContainer = styled.div`
       justify-content: flex-end
     }
 
-    .forgotPasswordContainer {
+    .voltarContainer {
       margin: 0;
       padding: 0;
       cursor: pointer;
     }
 
-    .forgotPasswordText {
-      font-size: .8rem;
-      padding: 0;
+    .voltarText {
+        width: 100%
+        text-align: center;
+        font-size: .8rem;
+        padding: 0;
     }
 
-    .forgotPasswordContainer:hover {
+    .voltarContainer:hover {
       text-decoration: underline;
     }
   }

@@ -5,12 +5,14 @@ import { Result } from "../../pages/Result";
 import { Home } from "../../pages/Home";
 import { AllResults } from "../../pages/AllResults";
 import { Login } from "../../pages/Login";
+import { EsqueciSenha } from "../../pages/EsqueciSenha";
 import { Support } from "../../pages/Support";
 
 export const Routes = () => {
   return (
     <AppRoutes>
       <Route path="/login" element={<Login />} />
+      <Route path="/esqueci-senha" element={<EsqueciSenha />} />
       <Route element={<AuthGuard />}>
         <Route path="/" element={<Home />} />
         <Route path="/upload" element={<Upload />} />

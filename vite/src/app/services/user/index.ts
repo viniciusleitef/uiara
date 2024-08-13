@@ -64,10 +64,13 @@ class UserService {
 
     async forgotPasswordStepOne(userEmail: string) {
         try {
-            const payload = {
-                user_email: userEmail
+            const userPayload = {
+                username: "",
+                email: userEmail, 
+                password: "",
+                login_verification_code: "",
             }
-            const response = await api.post('/forgot-password-one', payload);
+            const response = await api.post('/forgot-password-one', userPayload);
             return response;
           } catch (error) {
             throw error;
@@ -76,11 +79,13 @@ class UserService {
 
     async forgotPasswordStepTwo(userEmail: string, verificationCode: string) {
         try {
-            const payload = {
-                user_email: userEmail,
-                verification_code: verificationCode
-            };
-            const response = await api.post('/forgot-password-two', payload);
+            const userPayload = {
+                username: "",
+                email: userEmail, 
+                password: "",
+                login_verification_code: verificationCode,
+            }
+            const response = await api.post('/forgot-password-two', userPayload);
             return response;
         } catch (error) {
             throw error;
@@ -89,11 +94,13 @@ class UserService {
 
     async forgotPasswordStepThree(userEmail: string, newPassword: string) {
         try {
-            const payload = {
-                user_email: userEmail,
-                new_password: newPassword
-            };
-            const response = await api.post('/forgot-password-three', payload);
+            const userPayload = {
+                username: "",
+                email: userEmail, 
+                password: newPassword,
+                login_verification_code: "",
+            }
+            const response = await api.post('/forgot-password-three', userPayload);
             return response;
         } catch (error) {
             throw error;
