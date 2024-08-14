@@ -16,7 +16,7 @@ export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>("null"); // NULL
   const [loading, setLoading] = useState<boolean>(false);
 
   const [verificationCode, setVerificationCode] = useState("");
