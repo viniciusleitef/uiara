@@ -177,9 +177,6 @@ export const Upload = () => {
 
       const audioResponse = await audioService.postAudio(formData);
       const audioResponseData = audioResponse.data
-      console.log(audioResponseData)
-
-      console.log(audioResponseData)
 
       navigate(`/result/${cleanedProcessNumber}`, { state: { audioResponseData } });
       setFiles([]);
@@ -295,6 +292,7 @@ export const Upload = () => {
                 </Typography>
         
                 <IconButton
+                  title="Deletar áudio"
                   onClick={() => removeExistingFile(file.id)}
                   aria-label="delete"
                 >
@@ -339,7 +337,7 @@ export const Upload = () => {
             color="primary"
             onClick={uploadAllFiles}
             disabled={
-              !isModified || !((processNumber).length==20) || !responsible || !title || !files.length
+              !isModified || !((processNumber).length==20) || !responsible || !title || !(files.length || existingFiles.length)
             }
           >
             Enviar Processo

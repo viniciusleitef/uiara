@@ -9,7 +9,9 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { formatDuration } from "../../utils/formatDuration";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { MdOutlineEdit } from "react-icons/md";
+import { FaCloudDownloadAlt } from "react-icons/fa";
 import processService from "../../app/services/process";
+import pdfService from "../../app/services/pdf";
 import { PopUp } from "../../components/PopUp";
 
 export const AllResults = () => {
@@ -27,6 +29,7 @@ export const AllResults = () => {
     setIsLoading(true);
     try {
       const response = await audioService.getAllAudios();
+      console.log(response.data);
       setProcesses(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -34,6 +37,22 @@ export const AllResults = () => {
       setIsLoading(false);
     }
   };
+
+  const handleDownloadClick = async (num_process: string) => {
+    setSelectedProcess(num_process);
+    try {
+      const response = await pdfService.getPdf(num_process);
+      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `process_${num_process}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+  } catch (error) {
+      console.error('Erro ao baixar o PDF:', error);
+  }
+  }
 
   const handleDeleteClick = (num_process: string) => {
     setSelectedProcess(num_process);
@@ -105,7 +124,17 @@ export const AllResults = () => {
                 </div>
 
                 <div className="configs-buttons-box">
+
+                  <div
+                    title="Baixar PDF"
+                    className="trash icon-box"
+                    onClick={() => handleDownloadClick(process.num_process)}
+                  >
+                    <FaCloudDownloadAlt size={25}/>
+                  </div>
+
                   <div 
+                    title="Editar processo"
                     className="icon-box"
                     onClick={() => handleEditClick(process.num_process)}
                   >
@@ -113,11 +142,13 @@ export const AllResults = () => {
                   </div>
 
                   <div
+                    title="Apagar Processo"
                     className="trash icon-box"
                     onClick={() => handleDeleteClick(process.num_process)}
                   >
                     <FaRegTrashAlt size={25} />
                   </div>
+                  
                 </div>
               </div>
               {process.audios.map((audio) => (

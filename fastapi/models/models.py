@@ -26,6 +26,8 @@ class Audio(Base):
     audio_duration: Mapped[float] = mapped_column(Float, nullable=False, unique=False)
     sample_rate: Mapped[float] = mapped_column(Float, nullable=False, unique=False)
     snr: Mapped[float] = mapped_column(Float, nullable=False, unique= False)
+    created_at: Mapped[datetime] = mapped_column(DateTime)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     process = relationship("Process", back_populates="audio")
     trained_model = relationship("TrainedModels", back_populates="audio")

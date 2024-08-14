@@ -38,6 +38,7 @@ namex
 noisereduce
 numba
 numpy
+reportlab
 opt-einsum
 optree
 orjson
