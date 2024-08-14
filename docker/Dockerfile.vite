@@ -1,0 +1,19 @@
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY ./vite /app
+
+EXPOSE 8301
+
+RUN npm i && \ 
+    apk add wget curl jq
+
+RUN wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz && \
+    tar xvzf ngrok-v3-stable-linux-amd64.tgz -C /usr/local/bin
+
+COPY ./docker/entrypoint_vite.sh /app/
+
+RUN chmod +x /app/entrypoint_vite.sh
+
+CMD [ "/app/entrypoint_vite.sh" ] 
