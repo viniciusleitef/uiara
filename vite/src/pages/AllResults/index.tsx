@@ -97,6 +97,19 @@ export const AllResults = () => {
     return formatted;
   };
 
+  const formatDate = (dateString: string): string => {
+    // Cria um objeto Date a partir da string recebida
+    const date = new Date(dateString);
+    
+    // Extrai o ano, mês e dia
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Adiciona zero à esquerda se necessário
+    const day = String(date.getDate()).padStart(2, '0'); // Adiciona zero à esquerda se necessário
+  
+    // Retorna a data formatada no formato 'ano-mes-dia'
+    return `${year}-${month}-${day}`;
+  }
+
   return (
     <>
       <BackPage to="/home" />
@@ -119,7 +132,7 @@ export const AllResults = () => {
                   <h2>{process.title} #{formatProcessNumber(process.num_process)}</h2>
                   <p>
                     Responsável: {process.responsible} - Data de Criação:{" "}
-                    {process.created_at}
+                    {formatDate(process.created_at)}
                   </p>
                 </div>
 
