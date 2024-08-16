@@ -12,7 +12,7 @@ from routes.trained_models_routes import router as trained_models_routes
 from routes.user_routes import router as users_routes
 from routes.pdf_routes import router as pdf_routes
 
-# Base.metadata.create_all(bind=engine) 
+Base.metadata.create_all(bind=engine) 
 app = FastAPI()
 
 app.add_middleware(

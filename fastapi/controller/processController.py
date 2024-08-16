@@ -42,6 +42,8 @@ async def create_process_db(process, db):
     if db_process.first() is not None:
         raise HTTPException(status_code=400, detail="Processo already exists")
     
+    # Verificar se todos os audios foram validos
+
     new_process = create_process(process, STATUS_ID, db)
     create_process_dir(new_process.id, BASE_FILE_PATH)
 
@@ -75,6 +77,7 @@ def create_process_dir(process_id:int, BaseFilePath:str):
 async def delete_process_by_numprocess(num_process:str, base_filepath:str, db:Session):
     # Pegando process para pegar o id
     process = get_process_by_numprocess_db(num_process, db)
+    print("CHEGUEI AQUI")
 
     await delete_process_dir(process.id, base_filepath)
     delete_audios_db(process.id, db)

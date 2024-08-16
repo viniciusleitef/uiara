@@ -24,7 +24,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     async (email: string, password: string, captchaToken: string): Promise<void> => {
       return new Promise(async (resolve, reject) => {
         try {
-          //await userService.verifyCaptcha(captchaToken); 
+          //await userService.verifyCaptcha(captchaToken);
+          console.log(captchaToken); 
           await userService.loginStepOne(email, password);
           resolve();
         } catch (error) {

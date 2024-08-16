@@ -110,6 +110,7 @@ def login_user_step_two_db(verification_code: str, user: UserSchema, db: Session
         raise HTTPException(status_code=400, detail="Senha inválida.")
     raise HTTPException(status_code=400, detail="Usuário não existe.")
 
+
 def forgot_password_user_step_one(user_email: str, db: Session):
     print("forgot password one", user_email)
 

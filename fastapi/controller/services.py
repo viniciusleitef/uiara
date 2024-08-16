@@ -72,6 +72,7 @@ def update_all_processes_status_db(db:Session):
         update_process_status(process, db)
     return {"message":"Processes updated"}
 
+
 # User
 
 def get_user_by_email_db(email, db:Session):

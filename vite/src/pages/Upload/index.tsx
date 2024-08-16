@@ -109,6 +109,7 @@ export const Upload = () => {
         try {
           const deletePromises = audiosToDelete.map(audio => audioService.deleteAudio(audio.id));
           const audioResponses = await Promise.all(deletePromises);
+          console.log(audioResponses)
         } catch (error) {
           console.error("Error deleting audio files:", error);
           setErrorMessage("Erro ao excluir os arquivos");

@@ -11,6 +11,7 @@ import aiofiles
 import librosa
 import io
 import os
+import controller.processController as processController
 
 from controller.services import get_process_by_numprocess_db, get_audio_by_url_db, get_audio_by_id_db, update_process_status, update_process_date_db, get_process_by_process_id
 from controller.trainedModelsController import get_active_models_filepath
@@ -69,6 +70,7 @@ async def create_audio_db(num_process:str, db: Session, files: List[UploadFile])
             continue
         
         if not file.filename.endswith(('.wav')):
+            print("teste")
             errors.append({
                 "file": file.filename,
                 "error": "O arquivo não é um arquivo WAV válido.",
@@ -114,6 +116,9 @@ async def create_audio_db(num_process:str, db: Session, files: List[UploadFile])
             "created_at": new_audio.created_at,
             "updated_at": new_audio.updated_at
             })
+
+    if not audiosRegistered:
+        await processController.delete_process_by_numprocess(num_process, BASE_FILE_PATH, db)
     
     return {
         "audiosRegisteres": audiosRegistered,
