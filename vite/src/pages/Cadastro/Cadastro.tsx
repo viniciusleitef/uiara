@@ -1,8 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { LoginContainer, ModalContainer } from "./styles";
+import { LoginContainer, ModalContainer } from './styles';
 import Person from "@mui/icons-material/Person";
 import VpnKey from "@mui/icons-material/VpnKey";
+import Mail from "@mui/icons-material/Mail";
 import { AuthContext } from "../../app/context/AuthContext";
 import { StyledInput } from "../../styles/input";
 import LoginIcon from "@mui/icons-material/Login";
@@ -11,11 +12,15 @@ import { Modal } from "../../components/Modal";
 
 const chave_do_site = "6LcNWSIqAAAAAFpJrPF6iRt6ZIO5t9Oo1jLnl7FY"
 
-export const Login = () => {
-  const { user, signInStepOne, validateUser } = useContext(AuthContext);
+export const Cadastro = () => {
+  const { user, signUp, validateUser } = useContext(AuthContext);
+
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
   const [error, setError] = useState<string | null>(null);
+
   const [captchaToken, setCaptchaToken] = useState<string | null>("null"); // NULL
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -38,23 +43,23 @@ export const Login = () => {
       setError("Por favor complete o CAPTCHA");
       return;
     }
-    setError(null);
+    setError(null)
+    setErrorVerification(null);
     setLoading(true);
     try {
-      await signInStepOne(email, password, captchaToken);
+      await signUp(name, email, password);
       setError(null);
+      setSecondStep(true);
     } catch (err) {
-      console.log(err)
-      if ((err as any).response?.data?.detail === 'Usuário ainda não foi validado.') {
-        setError(null);
-        setSecondStep(true);
-        return; 
-      }
       const errorMessage = (err as any).response?.data?.detail || "Um erro ocorreu";
       setError(errorMessage);
     } finally {
       setLoading(false); 
     }
+  };
+
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
   };
 
   const handleVerificateAccount = async (e: React.FormEvent) => {
@@ -63,10 +68,10 @@ export const Login = () => {
     setLoading(true);
     try {
       await validateUser(email, verificationCode);
-      setError("Seu usuário foi validado. Faça o login.");
+      setError(null);
       setSecondStep(false);
       navigate('/login')
-    } catch (err) { 
+    } catch (err) {
       const errorMessage = (err as any).response?.data?.detail || "Um erro ocorreu";
       setErrorVerification(errorMessage);
     } finally {
@@ -74,16 +79,8 @@ export const Login = () => {
     }
   }
 
-  const handleCaptchaChange = (token: string | null) => {
-    setCaptchaToken(token);
-  };
-
-  const handleForgotPassword = () => {
-    navigate('/esqueci-senha')
-  }
-
-  const handleCadatro = () => {
-    navigate('/cadastro')
+  const handleLogin = () => {
+    navigate("/login")
   }
 
   return (
@@ -93,6 +90,16 @@ export const Login = () => {
       <form onSubmit={handleSubmitStepOne}>
         <div>
           <Person />
+          <StyledInput
+            type="name"
+            placeholder="Nome"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <Mail />
           <StyledInput
             type="email"
             placeholder="Email"
@@ -111,11 +118,17 @@ export const Login = () => {
             required
           />
         </div>
-        <div className="forgotPasswordOuterContainer">
-          <div onClick={handleForgotPassword} className="forgotPasswordContainer">
-            <p className="forgotPasswordText">Esqueci a senha</p>
-          </div>
+        <div>
+          <VpnKey />
+          <StyledInput
+            type="password"
+            placeholder="Confirmar Senha"
+            value={password2}
+            onChange={(e) => setPassword2(e.target.value)}
+            required
+          />
         </div>
+        
         {/* <ReCAPTCHA
           sitekey={chave_do_site}
           onChange={handleCaptchaChange}
@@ -124,12 +137,12 @@ export const Login = () => {
         {error && <p>{error}</p>}
         <button type="submit">
           <LoginIcon />
-          Entrar
+          Cadastrar
         </button>
 
         <div className="signUpOuterContainer">
-          <div onClick={handleCadatro} className="signUpContainer">
-            <p className="signUpText">Cadastrar conta</p>
+          <div onClick={handleLogin} className="signUpContainer">
+            <p className="signUpText">Fazer Login</p>
           </div>
         </div>
 

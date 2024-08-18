@@ -95,6 +95,8 @@ export const EsqueciSenha = () => {
 
   return (
     <EsqueciContainer>
+      <Modal>
+      <ModalContainer>
         <form onSubmit={handleSubmitForgotPasswordStepOne}>
             <p>Digite o email da sua conta. Enviaremos um código para você redefinir a senha.</p>
             <div>
@@ -115,6 +117,8 @@ export const EsqueciSenha = () => {
                 <p className="voltarText">Voltar ao início</p>
             </div>
         </form>
+        </ModalContainer>
+        </Modal>
         {forgotPasswordModalSecondStep &&
         <Modal>
           <ModalContainer>

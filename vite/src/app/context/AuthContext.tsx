@@ -23,25 +23,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const signInStepOne = useCallback(
     async (email: string, password: string, captchaToken: string): Promise<void> => {
       return new Promise(async (resolve, reject) => {
+        const newUser = { email, password };
         try {
           //await userService.verifyCaptcha(captchaToken);
           console.log(captchaToken); 
-          await userService.loginStepOne(email, password);
-          resolve();
-        } catch (error) {
-          reject(error);
-        }
-      });
-    },
-    [navigate]
-  );
-
-  const signInStepTwo = useCallback(
-    async (email: string, password: string, verificationCode: string): Promise<void> => {
-      return new Promise(async (resolve, reject) => {
-        const newUser = { email, password };
-        try {
-          const { token } = await userService.loginStepTwo(email, password, verificationCode);
+          const { token } = await userService.loginStepOne(email, password);
           localStorage.setItem("jwtToken", token);
           localStorage.setItem("user", JSON.stringify(newUser))
           navigate("/");  
@@ -104,6 +90,34 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     [navigate]
   );
 
+  const signUp = useCallback(
+    async (name: string, email: string, password: string): Promise<void> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await userService.signUp(name, email, password);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
+    [navigate]
+  );
+
+  const validateUser = useCallback(
+    async (email: string, verificationCode: string): Promise<void> => {
+      return new Promise(async (resolve, reject) => {
+        try {
+          await userService.validateUser(email, verificationCode);
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
+      });
+    },
+    [navigate]
+  );
+
   const checkTokenExpiration = useCallback(() => {
     const token = localStorage.getItem("jwtToken");
     if (token) {
@@ -123,13 +137,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       user,
       setUser,
       signInStepOne,
-      signInStepTwo,
       signOut,
       forgotPasswordStepOne,
       forgotPasswordStepTwo,
       forgotPasswordStepThree,
+      signUp,
+      validateUser
     }),
-    [user, setUser, signInStepOne, signInStepTwo, signOut, forgotPasswordStepOne, forgotPasswordStepTwo, forgotPasswordStepThree]
+    [user, setUser, signInStepOne, signOut, forgotPasswordStepOne, forgotPasswordStepTwo, forgotPasswordStepThree, signUp, validateUser]
   );
 
   return (

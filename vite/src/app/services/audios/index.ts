@@ -22,7 +22,7 @@ class AudioService {
 
   async postAudio(formData: FormData){
     try {
-      const response = await api.post("/upload-audios/", formData, {
+      const response = await api.post("/upload-audios", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

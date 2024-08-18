@@ -16,6 +16,8 @@ export const BlueHeader = styled.div`
 export const WhiteHeader = styled.div`
   background-color: ${colors.white};
   height: 50px;
+  display: flex;
+  flex-direction: row;
 
   > div {
     width: 100%;
@@ -25,6 +27,10 @@ export const WhiteHeader = styled.div`
     height: 100%;
     display: flex;
     align-items: center;
+    padding-left: 3em;
+    padding-right: 3em;
+
+
 
     @media (max-width: 1200px) {
       max-width: 960px;
@@ -42,5 +48,34 @@ export const WhiteHeader = styled.div`
       width: 100%;
       padding: 0 15px;
     }
+  }
+
+  .tre-div {
+
+  }
+
+  .logout-div {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .confirmation {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: .5em;
+  }
+
+  button {
+    background-color: ${colors.primary};
+    color: ${colors.white};
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items:center;
+    font-size: .8em;
+    cursor: pointer;
+    z-index: 20;
   }
 `;

@@ -6,7 +6,7 @@ export const EsqueciContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 60vh;
   overflow-y: visible;
 
   form {
@@ -26,7 +26,7 @@ export const EsqueciContainer = styled.div`
     }
 
     button {
-      margin: 0.5em 0.5em 0 3em;
+      margin: 0;
       background-color: ${colors.secondary};
       font-weight: bold;
       padding: 1em;
@@ -73,6 +73,6 @@ export const ModalContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 60vh;
   width: 100%;
 `;

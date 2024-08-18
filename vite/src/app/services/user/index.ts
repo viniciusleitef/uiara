@@ -20,31 +20,16 @@ class UserService {
         }
     }
 
-    async loginStepOne(userEmail: string, userPassword: string) {
+    async loginStepOne(userEmail: string, userPassword: string): Promise<LoginResponse> {
         try {
             const userPayload = {
                 username: "",
                 email: userEmail, 
                 password: userPassword,
-                login_verification_code: "",
+                verification_code: "",
             }
-            const response = await api.post('/login-step-one', userPayload);
-            return response
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async loginStepTwo(userEmail: string, userPassword: string, verificationCode: string) {
-        try {
-            const userPayload = {
-                username: "",
-                email: userEmail, 
-                password: userPassword,
-                login_verification_code: verificationCode
-            }
-            const response = await api.post<LoginResponse>('/login-step-two', userPayload);
-            return response.data
+            const response = await api.post('/login', userPayload);
+            return response.data;
         } catch (error) {
             throw error;
         }
@@ -68,7 +53,7 @@ class UserService {
                 username: "",
                 email: userEmail, 
                 password: "",
-                login_verification_code: "",
+                verification_code: "",
             }
             const response = await api.post('/forgot-password-one', userPayload);
             return response;
@@ -83,7 +68,7 @@ class UserService {
                 username: "",
                 email: userEmail, 
                 password: "",
-                login_verification_code: verificationCode,
+                verification_code: verificationCode,
             }
             const response = await api.post('/forgot-password-two', userPayload);
             return response;
@@ -98,14 +83,44 @@ class UserService {
                 username: "",
                 email: userEmail, 
                 password: newPassword,
-                login_verification_code: "",
+                verification_code: "",
             }
             const response = await api.post('/forgot-password-three', userPayload);
             return response;
         } catch (error) {
             throw error;
         }
+    }
+
+    async signUp(userName: string, userEmail: string, password: string) {
+        try {
+            const userPayload = {
+                username: userName,
+                email: userEmail, 
+                password: password,
+                verification_code: "",
+            }
+            const response = await api.post('/user', userPayload);
+            return response;
+        } catch (error) {
+            throw error;
         }
+    }
+
+    async validateUser(userEmail: string, verificationCode: string) {
+        try {
+            const userPayload = {
+                username: "",
+                email: userEmail, 
+                password: "",
+                verification_code: verificationCode,
+            }
+            const response = await api.post('/validate-user', userPayload);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 const userService = new UserService();

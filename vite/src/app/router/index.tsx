@@ -7,12 +7,14 @@ import { AllResults } from "../../pages/AllResults";
 import { Login } from "../../pages/Login";
 import { EsqueciSenha } from "../../pages/EsqueciSenha";
 import { Support } from "../../pages/Support";
+import { Cadastro } from "../../pages/Cadastro/Cadastro";
 
 export const Routes = () => {
   return (
     <AppRoutes>
       <Route path="/login" element={<Login />} />
       <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+      <Route path="/cadastro" element={<Cadastro />} />
       <Route element={<AuthGuard />}>
         <Route path="/" element={<Home />} />
         <Route path="/upload" element={<Upload />} />
