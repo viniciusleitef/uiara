@@ -25,12 +25,14 @@ def generate_expiration_time():
     verification_expire_time = datetime.now(timezone.utc) + timedelta(minutes=VERIFICATION_CODE_EXPIRATION_MINUTES)
     return verification_expire_time
 
-def create_jwt_token(email: str) -> str:
+def create_jwt_token(email: str, username, user_id) -> str:
     """
     Create a JWT token with a specific expiration time, including the username.
     """
     payload = {
         "email": email,
+        "username": username,
+        "user_id": user_id,
         "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRATION_HOURS)   
     }
     token = jwt.encode(payload, SECRET_KEY, algorithm=JWT_ALGORITHM)

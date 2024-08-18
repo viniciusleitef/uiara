@@ -16,27 +16,30 @@ router = APIRouter()
 @router.get("/process/{num_process}")
 def get_process_by_numprocess(num_process: str, db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
     Validation.has_process(num_process, db)
+    Validation.is_users_process(num_process, current_user.get("user_id"), db)
     return get_process_by_numprocess_db(num_process, db)
 
 @router.get("/processes")
 def get_all_process(db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
     print("GET PROCESSES")
-    return get_all_process_db(db)
+    return get_all_process_db(db, current_user.get("user_id"))
 
 @router.get("/processesWithAudios")
 def get_processes_with_audios(db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
-    return get_all_processes_with_audios_db(db)
+    return get_all_processes_with_audios_db(db, current_user.get("user_id"))
 
 @router.delete("/process/{num_process}")
 async def delete_process(num_process: str, db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
     Validation.has_process(num_process, db)
+    Validation.is_users_process(num_process, current_user.get("user_id"), db)
     return await delete_process_by_numprocess(num_process, BASE_FILE_PATH, db)
 
 @router.post("/process")
 async def create_process(process: ProcessSchema, db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
     print("POST PROCESS")
-    return await create_process_db(process ,db)
+    return await create_process_db(process, db, current_user.get("user_id"))
 
 @router.put("/process/{num_process}")
 async def update_process_title(num_process: str, new_title: str, db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
+    Validation.is_users_process(num_process, current_user.get("user_id"), db)
     return update_process_title_db(num_process, new_title, db)

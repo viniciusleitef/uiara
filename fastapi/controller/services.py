@@ -53,7 +53,6 @@ def update_process_date_db(process_id:int, db:Session):
         db.commit()
         db.refresh(process)
     
-
 def update_process_status(process:Process, db:Session):
     audioList = get_audios_by_process_id_db(process.id, db)
     process_status = verify_status(audioList)
@@ -66,12 +65,17 @@ def update_process_status_db(process_status:int , process:Process, db:Session):
     db.refresh(process)
     return 
 
-def update_all_processes_status_db(db:Session):
-    data = db.query(Process).all()
+def update_all_processes_status_db(db:Session, user_id: str):
+    data = db.query(Process).filter(Process.user_id == user_id).all()
     for process in data:
         update_process_status(process, db)
     return {"message":"Processes updated"}
 
+def get_process_owner(numprocess: str, db:Session):
+    process = db.query(Process).filter(Process.num_process == numprocess).first()
+    if process:
+        return process.user_id
+    return False
 
 # User
 

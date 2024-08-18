@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import UploadFile, HTTPException
-from controller.services import get_process_by_numprocess_db, get_audio_by_url_db, get_audio_by_id_db, get_user_by_email_db, get_user_by_id_db
+from controller.services import get_process_by_numprocess_db, get_audio_by_url_db, get_audio_by_id_db, get_user_by_email_db, get_user_by_id_db, get_process_owner
 
 class Validation():
     
@@ -26,6 +26,11 @@ class Validation():
         process = get_process_by_numprocess_db(numprocess, db)
         if not process:
             raise HTTPException(status_code=400, detail="Process does not exist")
+        
+    def is_users_process(numprocess:str, user_id: str, db):
+        process_owner = get_process_owner(numprocess, db)
+        if process_owner != user_id:
+            raise HTTPException(status_code=400, detail="User does not own this process")
         
     def has_email(email:str, db:Session):
         user = get_user_by_email_db(email, db)

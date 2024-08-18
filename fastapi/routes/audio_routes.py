@@ -21,7 +21,7 @@ async def get_audioFile_by_url(audio_id: int, db: Session = Depends(get_db), cur
     Validation.has_audiofile(audio_id, db)
     return await get_audioFile(audio_id, db)
 
-@router.post("/upload-audios/")
+@router.post("/upload-audios")
 async def upload_audios( num_process: str = Form(...), files: List[UploadFile] = File(...), db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
     Validation.has_process(num_process, db)
     

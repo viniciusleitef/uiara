@@ -14,13 +14,13 @@ import os
 
 from config import BASE_FILE_PATH, STATUS_ID
 
-def get_all_process_db(db: Session):
-    update_all_processes_status_db(db)
-    return db.query(Process).order_by(desc(Process.id)).all()
+def get_all_process_db(db: Session, user_id: str):
+    update_all_processes_status_db(db, user_id)
+    return db.query(Process).order_by(desc(Process.id)).filter(Process.user_id == user_id).all()
 
-def get_all_processes_with_audios_db(db: Session):
-    update_all_processes_status_db(db)
-    processes = get_all_process_db(db)
+def get_all_processes_with_audios_db(db: Session, user_id: str):
+    update_all_processes_status_db(db, user_id)
+    processes = get_all_process_db(db, user_id)
     response = []
     for process in processes:
         process_dict = process.__dict__
@@ -37,25 +37,31 @@ def verify_status(audioList):
             return 1                        # Em análise
     return 3                                # Verdadeiro
 
-async def create_process_db(process, db):
+async def create_process_db(process, db, user_id):
     db_process = db.query(Process).filter(Process.num_process == process.num_process)
     if db_process.first() is not None:
         raise HTTPException(status_code=400, detail="Processo already exists")
     
     # Verificar se todos os audios foram validos
+    print("TESTE")
 
-    new_process = create_process(process, STATUS_ID, db)
+    new_process = create_process(process, STATUS_ID, db, user_id)
+    print("TESTE1.5")
     create_process_dir(new_process.id, BASE_FILE_PATH)
+    print("TESTE2")
 
     return new_process
 
-def create_process(process:ProcessSchema, status_id:int, db:Session):
+def create_process(process:ProcessSchema, status_id:int, db:Session, user_id:str):
     if not get_all_status_db(db):
+        print("eita")
         raise HTTPException(status_code=400, detail="Tabela status precisa ser criada")
+    
     new_process = Process(
         status_id = status_id,
         num_process = process.num_process,
         title = process.title,
+        user_id = user_id,
         responsible = process.responsible,
         created_at = datetime.now(),
         updated_at = datetime.now()
