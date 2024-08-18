@@ -134,8 +134,8 @@ def create_pdf(process, audios: list, db):
     buffer.seek(0)
     return buffer
 
-def generate_pdf_file(num_process: str, db: Session):
-    process = get_process_by_numprocess_db(num_process, db)
+def generate_pdf_file(num_process: str, db: Session, user_id):
+    process = get_process_by_numprocess_db(num_process, db, user_id)
     audios = get_audios_by_process_id_db(process.id, db)
 
     pdf_buffer = create_pdf(process, audios, db)
