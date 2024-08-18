@@ -32,18 +32,57 @@ export const Cadastro = () => {
 
   const navigate = useNavigate();
 
+  const emailDomainCheck = false; 
+  const allowedDomains = ["jus.br"];
+
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
 
+  const isPasswordValid = (password: string) => {
+    const hasMinimumLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return hasMinimumLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+  };
+
+  const isEmailValid = (email: string) => {
+    if (!emailDomainCheck) return true;
+
+    const domain = email.split("@")[1];
+    return allowedDomains.some((allowedDomain) => domain.endsWith(allowedDomain));
+  };
+
   const handleSubmitStepOne = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!captchaToken) {
       setError("Por favor complete o CAPTCHA");
       return;
     }
+
+    if (password !== password2) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+
+    if (!isPasswordValid(password)) {
+      setError(
+        "A senha deve conter pelo menos 8 dígitos, incluindo letras maiúsculas, minúsculas, números e caracteres especiais."
+      );
+      return;
+    }
+
+    if (!isEmailValid(email)) {
+      setError("O email deve terminar com 'jus.br'.");
+      return;
+    }
+
     setError(null)
     setErrorVerification(null);
     setLoading(true);
