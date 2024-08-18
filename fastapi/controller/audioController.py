@@ -50,10 +50,10 @@ async def get_audioFile(audio_id: int, db:Session):
     filePath = audio.url
     return FileResponse(path=filePath, media_type='audio/wav', filename=os.path.basename(filePath))
 
-async def create_audio_db(num_process:str, db: Session, files: List[UploadFile]):
+async def create_audio_db(num_process:str, db: Session, files: List[UploadFile], user_id):
 
     ai_model = get_active_models_filepath(db)
-    process = get_process_by_numprocess_db(num_process, db)
+    process = get_process_by_numprocess_db(num_process, db, user_id)
     errors = []
     audiosRegistered = []
 

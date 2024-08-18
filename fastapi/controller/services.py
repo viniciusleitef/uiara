@@ -32,8 +32,8 @@ def get_audios_by_process_id_db(process_id:int, db:Session):
 
 # Process
 
-def get_process_by_numprocess_db(num_process: str, db:Session):
-    return db.query(Process).filter(Process.num_process == num_process).first()
+def get_process_by_numprocess_db(num_process: str, db:Session, user_id: str):
+    return db.query(Process).filter(Process.num_process == num_process).filter(Process.user_id == user_id).first()
 
 def get_process_by_process_id(process_id, db):
     return db.query(Process).filter(Process.id == process_id).first()
@@ -70,12 +70,6 @@ def update_all_processes_status_db(db:Session, user_id: str):
     for process in data:
         update_process_status(process, db)
     return {"message":"Processes updated"}
-
-def get_process_owner(numprocess: str, db:Session):
-    process = db.query(Process).filter(Process.num_process == numprocess).first()
-    if process:
-        return process.user_id
-    return False
 
 # User
 

@@ -38,8 +38,9 @@ def verify_status(audioList):
     return 3                                # Verdadeiro
 
 async def create_process_db(process, db, user_id):
-    db_process = db.query(Process).filter(Process.num_process == process.num_process)
+    db_process = db.query(Process).filter(Process.num_process == process.num_process).filter(Process.user_id == user_id)
     if db_process.first() is not None:
+        print("exists alreay")
         raise HTTPException(status_code=400, detail="Processo already exists")
     
     # Verificar se todos os audios foram validos
@@ -80,9 +81,9 @@ def create_process_dir(process_id:int, BaseFilePath:str):
     except Exception as e:
         print(f"Ocorreu um erro ao criar a pasta: {e}")
 
-async def delete_process_by_numprocess(num_process:str, base_filepath:str, db:Session):
+async def delete_process_by_numprocess(num_process:str, base_filepath:str, db:Session, user_id: str):
     # Pegando process para pegar o id
-    process = get_process_by_numprocess_db(num_process, db)
+    process = get_process_by_numprocess_db(num_process, db, user_id)
     print("CHEGUEI AQUI")
 
     await delete_process_dir(process.id, base_filepath)

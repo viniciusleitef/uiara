@@ -39,7 +39,7 @@ class Process(Base):
     status_id: Mapped[int] = mapped_column(Integer, ForeignKey("status.id"), nullable=False)
     title: Mapped[str] = mapped_column(String, nullable=False)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
-    num_process: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    num_process: Mapped[str] = mapped_column(String, nullable=False, unique=False)
     responsible: Mapped[str] = mapped_column(String, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime)
     updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

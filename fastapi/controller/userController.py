@@ -42,7 +42,7 @@ def create_user_db(user:UserSchema, db:Session):
     db_user.verification_code = verification_code
     db_user.verification_expires_at = verification_expiration_time
 
-    print("vERIFICATION CODE:", verification_code)
+    print("VERIFICATION CODE:", verification_code)
     
     db.commit()
     db.refresh(db_user)
@@ -98,7 +98,7 @@ def login_user_db(user: UserSchema, db: Session):
                 db_user.verification_code = verification_code
                 db_user.verification_expires_at = verification_expiration_time
 
-                print("vERIFICATION CODE:", verification_code)
+                print("VERIFICATION CODE:", verification_code)
                 
                 db.commit()
                 db.refresh(db_user)
@@ -126,7 +126,7 @@ def forgot_password_user_step_one(user_email: str, db: Session):
         db_user.verification_code = verification_code
         db_user.verification_expires_at = verification_expiration_time
 
-        print("vERIFICATION CODE:", verification_code)
+        print("VERIFICATION CODE:", verification_code)
         
         db.commit()
         db.refresh(db_user)

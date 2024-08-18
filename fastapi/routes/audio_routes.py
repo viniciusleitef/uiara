@@ -12,8 +12,8 @@ router = APIRouter()
 
 @router.get("/audios/{num_process}")
 def get_audios_by_process_id(num_process: str, db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
-    process = get_process_by_numprocess_db(num_process, db)
-    Validation.has_process(num_process, db)
+    process = get_process_by_numprocess_db(num_process, db, current_user.get('user_id'))
+    Validation.has_process(num_process, db, current_user.get('user_id'))
     return get_audios_by_process_id_db(process.id, db)
 
 @router.get("/audioFile/{audio_id}")
@@ -23,9 +23,9 @@ async def get_audioFile_by_url(audio_id: int, db: Session = Depends(get_db), cur
 
 @router.post("/upload-audios")
 async def upload_audios( num_process: str = Form(...), files: List[UploadFile] = File(...), db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
-    Validation.has_process(num_process, db)
+    Validation.has_process(num_process, db, current_user.get('user_id'))
     
-    return await create_audio_db(num_process, db, files)
+    return await create_audio_db(num_process, db, files, current_user.get('user_id'))
 
 @router.put("/update-audio/{audio_id}")
 def update_audio_title(audio_id: int, new_title: str, db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
