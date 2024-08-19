@@ -10,6 +10,7 @@ from controller.statusController import get_all_status_db
 import shutil
 import os
 
+import controller.trainedModelsController as trainedModelsController
 # Status - 1 = Em análise / 2 = Falso / 3 = Verdadeiro
 
 from config import BASE_FILE_PATH, STATUS_ID
@@ -42,6 +43,9 @@ async def create_process_db(process, db, user_id):
     if db_process.first() is not None:
         print("exists alreay")
         raise HTTPException(status_code=400, detail="Processo already exists")
+    
+    if not trainedModelsController.get_active_model(db):
+        raise HTTPException(status_code=400, detail="Nenhum modelo ativo encontrado")
     
     # Verificar se todos os audios foram validos
     print("TESTE")

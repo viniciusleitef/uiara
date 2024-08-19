@@ -6,9 +6,10 @@ import VpnKey from "@mui/icons-material/VpnKey";
 import { AuthContext } from "../../app/context/AuthContext";
 import { StyledInput } from "../../styles/input";
 import LoginIcon from "@mui/icons-material/Login";
+// @ts-ignore
 import ReCAPTCHA from "react-google-recaptcha";
 import { Modal } from "../../components/Modal";
-
+// @ts-ignore
 const chave_do_site = "6LcNWSIqAAAAAFpJrPF6iRt6ZIO5t9Oo1jLnl7FY"
 
 export const Login = () => {
@@ -73,7 +74,7 @@ export const Login = () => {
       setLoading(false); 
     }
   }
-
+// @ts-ignore
   const handleCaptchaChange = (token: string | null) => {
     setCaptchaToken(token);
   };
