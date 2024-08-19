@@ -116,8 +116,8 @@ def delete_process_db(process_id, db):
         print(f"Ocorreu um erro ao excluir o processo: {e}")
         raise HTTPException(status_code=500, detail=f"An error occurred while deleting the process: {str(e)}")
     
-def update_process_title_db(num_process:str, new_title:str, db:Session):
-    process = get_process_by_numprocess_db(num_process, db)
+def update_process_title_db(num_process:str, new_title:str, db:Session, user_id: str):
+    process = get_process_by_numprocess_db(num_process, db, user_id)
     if process:
         process.title = new_title
         process.updated_at = datetime.now()

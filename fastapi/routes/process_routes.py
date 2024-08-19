@@ -38,4 +38,4 @@ async def create_process(process: ProcessSchema, db: Session = Depends(get_db), 
 @router.put("/process/{num_process}")
 async def update_process_title(num_process: str, new_title: str, db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
     Validation.has_process(num_process, db, current_user.get("user_id"))
-    return update_process_title_db(num_process, new_title, db)
+    return update_process_title_db(num_process, new_title, db, current_user.get("user_id"))
