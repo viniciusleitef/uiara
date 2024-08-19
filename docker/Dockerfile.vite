@@ -6,11 +6,11 @@ COPY ./vite /app
 
 EXPOSE 8301
 
-RUN npm i && \ 
-    apk add wget curl jq
+RUN npm i
 
-RUN wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz && \
-    tar xvzf ngrok-v3-stable-linux-amd64.tgz -C /usr/local/bin
+# RUN apk add wget curl jq && \
+#     wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-linux-amd64.tgz && \
+#     tar xvzf ngrok-v3-stable-linux-amd64.tgz -C /usr/local/bin
 
 COPY ./docker/entrypoint_vite.sh /app/
 

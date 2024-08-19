@@ -2,8 +2,12 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-#SQLALCHEMY_DATABASE_URL = "postgresql://postgres:postgres@localhost/detectai" 
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/detectai"
+from dotenv import load_dotenv
+load_dotenv()
+import os
+
+SQLALCHEMY_DATABASE_URL = os.environ["SQLALCHEMY_DATABASE_URL"]
+
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
