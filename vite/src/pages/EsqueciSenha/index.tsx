@@ -31,13 +31,14 @@ export const EsqueciSenha = () => {
     }, [user, navigate]);
 
     const isPasswordValid = (password: string) => {
-        const hasMinimumLength = password.length >= 8;
+        const hasMinimumLength = password.length >= 6;
         const hasUpperCase = /[A-Z]/.test(password);
         const hasLowerCase = /[a-z]/.test(password);
         const hasNumber = /\d/.test(password);
         const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-        return hasMinimumLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+        const hasNoRepeatingChars = !/(.)\1/.test(password);
+    
+        return hasMinimumLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && hasNoRepeatingChars;
     };
 
     const handleSubmitForgotPasswordStepOne = async (event: { preventDefault: () => void; }) => {
@@ -84,7 +85,7 @@ export const EsqueciSenha = () => {
 
         if (!isPasswordValid(forgotNewPassword)) {
             setError(
-                "A senha deve conter pelo menos 8 dígitos, incluindo letras maiúsculas, minúsculas, números e caracteres especiais."
+                "A senha deve conter pelo menos 6 dígitos, incluindo letras maiúsculas, minúsculas, números e caracteres especiais, e não incluir repetições sequenciais."
             );
             return;
         }
