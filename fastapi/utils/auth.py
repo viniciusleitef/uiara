@@ -5,14 +5,12 @@ from typing import Optional, Dict, Any
 import os
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from dotenv import load_dotenv
 
-load_dotenv()
-
-SECRET_KEY = os.getenv('SECRET_KEY')
 JWT_ALGORITHM = 'HS256' 
 JWT_EXPIRATION_HOURS = 24  
 VERIFICATION_CODE_EXPIRATION_MINUTES = 15
+
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 def generate_verification_code() -> str:
     """

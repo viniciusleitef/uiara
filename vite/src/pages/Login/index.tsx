@@ -25,6 +25,8 @@ export const Login = () => {
 
   const [errorVerification, setErrorVerification] = useState<string | null>(null);
 
+  const haveAuth = import.meta.env.VITE_HAVE_AUTH
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,12 +51,12 @@ export const Login = () => {
       if ((err as any).response?.data?.detail === 'Usuário ainda não foi validado.') {
         setError(null);
         setSecondStep(true);
-        return; 
+        return;
       }
       const errorMessage = (err as any).response?.data?.detail || "Um erro ocorreu";
       setError(errorMessage);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
 
@@ -67,14 +69,14 @@ export const Login = () => {
       setError("Seu usuário foi validado. Faça o login.");
       setSecondStep(false);
       navigate('/login')
-    } catch (err) { 
+    } catch (err) {
       const errorMessage = (err as any).response?.data?.detail || "Um erro ocorreu";
       setErrorVerification(errorMessage);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   }
-// @ts-ignore
+  // @ts-ignore
   const handleCaptchaChange = (token: string | null) => {
     setCaptchaToken(token);
   };
@@ -90,72 +92,75 @@ export const Login = () => {
   return (
     <LoginContainer>
       <Modal>
-      <ModalContainer>
-      <form onSubmit={handleSubmitStepOne}>
-        <div>
-          <Person />
-          <StyledInput
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <VpnKey />
-          <StyledInput
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div className="forgotPasswordOuterContainer">
-          <div onClick={handleForgotPassword} className="forgotPasswordContainer">
-            <p className="forgotPasswordText">Esqueci a senha</p>
-          </div>
-        </div>
-        {/* <ReCAPTCHA
-          sitekey={chave_do_site}
-          onChange={handleCaptchaChange}
-        /> */}
-        {loading && <p>Carregando...</p>} 
-        {error && <p>{error}</p>}
-        <button type="submit">
-          <LoginIcon />
-          Entrar
-        </button>
+        <ModalContainer>
+          <form onSubmit={handleSubmitStepOne}>
+            <div>
+              <Person />
+              <StyledInput
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <VpnKey />
+              <StyledInput
+                type="password"
+                placeholder="Senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div className="forgotPasswordOuterContainer">
+              <div onClick={handleForgotPassword} className="forgotPasswordContainer">
+                <p className="forgotPasswordText">Esqueci a senha</p>
+              </div>
+            </div>
+            {
+              haveAuth == 1 ?
+                <ReCAPTCHA
+                  sitekey={chave_do_site}
+                  onChange={handleCaptchaChange}
+                /> : null
+            }
+            {loading && <p>Carregando...</p>}
+            {error && <p>{error}</p>}
+            <button type="submit">
+              <LoginIcon />
+              Entrar
+            </button>
 
-        <div className="signUpOuterContainer">
-          <div onClick={handleCadatro} className="signUpContainer">
-            <p className="signUpText">Cadastrar conta</p>
-          </div>
-        </div>
+            <div className="signUpOuterContainer">
+              <div onClick={handleCadatro} className="signUpContainer">
+                <p className="signUpText">Cadastrar conta</p>
+              </div>
+            </div>
 
-      </form>
-      </ModalContainer>
+          </form>
+        </ModalContainer>
       </Modal>
       {secondStep &&
         <Modal>
           <ModalContainer>
-          <form onSubmit={handleVerificateAccount}>
-            <p>Um código de verificação foi enviado ao email {email}. Insira ele abaixo para validar sua conta.</p>
-            <StyledInput 
-              placeholder="Código de verificação"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-            />
-            <button type="submit">
-              <LoginIcon />
-              Confirmar
-            </button>
-            {errorVerification && <p>{errorVerification}</p>}
-          </form>
+            <form onSubmit={handleVerificateAccount}>
+              <p>Um código de verificação foi enviado ao email {email}. Insira ele abaixo para validar sua conta.</p>
+              <StyledInput
+                placeholder="Código de verificação"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+              />
+              <button type="submit">
+                <LoginIcon />
+                Confirmar
+              </button>
+              {errorVerification && <p>{errorVerification}</p>}
+            </form>
           </ModalContainer>
         </Modal>
-        }      
+      }
     </LoginContainer>
   );
 };

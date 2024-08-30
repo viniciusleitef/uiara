@@ -49,7 +49,6 @@ psycopg2-binary
 pycparser
 pydantic_core
 Pygments
-python-dotenv
 python-multipart
 PyYAML
 requests

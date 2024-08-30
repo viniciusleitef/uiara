@@ -1,17 +1,8 @@
 #!/bin/sh
 
-# ngrok config add-authtoken $NGROK_AUTH_TOKEN
-
-# ngrok http 8301 &
-
-# echo sleeping for 30s
-
-# sleep 30
-
-# cp /app/env/.env.production /app/
+echo "VITE_API_URL=${VITE_API_URL}" >> .env.production
+echo "VITE_HAVE_AUTH=${VITE_HAVE_AUTH}" >> .env.production
 
 npm run build
-
-# echo $(curl -s localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url')
 
 npm run preview
