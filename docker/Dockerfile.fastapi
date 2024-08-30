@@ -12,10 +12,6 @@ COPY ./fastapi /app
 
 RUN mkdir -p /app/env
 
-COPY ./docker/entrypoint_fastapi.sh /app/
-
-RUN chmod +x /app/entrypoint_fastapi.sh
-
 EXPOSE 8302
 
 CMD ["python3", "main.py"]
