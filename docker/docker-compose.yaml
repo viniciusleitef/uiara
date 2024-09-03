@@ -6,19 +6,19 @@ services:
     image: detectai_fastapi_image:latest
     ports:
       - 8302:8302
-    volumes:
-      - shared_env:/app/env
+    env_file:
+      - ../.env
+
   vite:
     container_name: detectai_vite
     depends_on:
       - fastapi
     image: detectai_vite_image:latest
-    env_file:
-      - ../.env
     ports:
       - 8305:8305
-    volumes:
-      - shared_env:/app/env
+    env_file:
+      - ../.env
+
   postgres:
     container_name: detectai_postgres
     image: postgres:latest
@@ -26,6 +26,8 @@ services:
       - 5433:5433
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+    env_file:
+      - ../.env
     environment:
       - PGPORT=5433
       - POSTGRES_DB=detectai
@@ -33,5 +35,4 @@ services:
       - POSTGRES_PASSWORD=postgres
 
 volumes:
-  shared_env:
   pgdata:

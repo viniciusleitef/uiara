@@ -18,6 +18,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     return JSON.parse(localStorage.getItem("user") || "null");
   });
 
+  const haveAuth = import.meta.env.VITE_HAVE_AUTH
+
   const navigate = useNavigate();
 
   const signInStepOne = useCallback(
@@ -25,12 +27,14 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       return new Promise(async (resolve, reject) => {
         const newUser = { email, password };
         try {
-          //await userService.verifyCaptcha(captchaToken);
-          console.log(captchaToken); 
+          if (haveAuth == 1) {
+            await userService.verifyCaptcha(captchaToken);
+          }
+          console.log(captchaToken);
           const { token } = await userService.loginStepOne(email, password);
           localStorage.setItem("jwtToken", token);
           localStorage.setItem("user", JSON.stringify(newUser))
-          navigate("/");  
+          navigate("/");
           resolve();
           setUser(newUser);
         } catch (error) {

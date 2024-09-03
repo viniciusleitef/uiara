@@ -2,20 +2,16 @@ FROM python:3.12-bullseye
 
 WORKDIR /app
 
-COPY ../.env /app/
-
-COPY ./fastapi /app
-
 COPY ./fastapi/requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir -r ./requirements.txt
 
+COPY ../.env /app/
+
+COPY ./fastapi /app
+
 RUN mkdir -p /app/env
-
-COPY ./docker/entrypoint_fastapi.sh /app/
-
-RUN chmod +x /app/entrypoint_fastapi.sh
 
 EXPOSE 8302
 
-CMD ["/app/entrypoint_fastapi.sh"]
+CMD ["python3", "main.py"]

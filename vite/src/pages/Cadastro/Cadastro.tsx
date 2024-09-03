@@ -8,7 +8,6 @@ import { AuthContext } from "../../app/context/AuthContext";
 import { StyledInput } from "../../styles/input";
 import LoginIcon from "@mui/icons-material/Login";
 // @ts-ignore
-import ReCAPTCHA from "react-google-recaptcha";
 import { Modal } from "../../components/Modal";
 // @ts-ignore
 const chave_do_site = "6LcNWSIqAAAAAFpJrPF6iRt6ZIO5t9Oo1jLnl7FY"
@@ -32,7 +31,7 @@ export const Cadastro = () => {
 
   const navigate = useNavigate();
 
-  const emailDomainCheck = false; 
+  const emailDomainCheck = false;
   const allowedDomains = ["jus.br"];
 
   useEffect(() => {
@@ -50,7 +49,7 @@ export const Cadastro = () => {
     const hasNoRepeatingChars = !/(.)\1/.test(password);
 
     return hasMinimumLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar && hasNoRepeatingChars;
-};
+  };
 
   const isEmailValid = (email: string) => {
     if (!emailDomainCheck) return true;
@@ -95,10 +94,10 @@ export const Cadastro = () => {
       const errorMessage = (err as any).response?.data?.detail || "Um erro ocorreu";
       setError(errorMessage);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   };
-// @ts-ignore
+  // @ts-ignore
   const handleCaptchaChange = (token: string | null) => {
     setCaptchaToken(token);
   };
@@ -116,7 +115,7 @@ export const Cadastro = () => {
       const errorMessage = (err as any).response?.data?.detail || "Um erro ocorreu";
       setErrorVerification(errorMessage);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
   }
 
@@ -127,88 +126,83 @@ export const Cadastro = () => {
   return (
     <LoginContainer>
       <Modal>
-      <ModalContainer>
-      <form onSubmit={handleSubmitStepOne}>
-        <div>
-          <Person />
-          <StyledInput
-            type="name"
-            placeholder="Nome"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <Mail />
-          <StyledInput
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <VpnKey />
-          <StyledInput
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <VpnKey />
-          <StyledInput
-            type="password"
-            placeholder="Confirmar Senha"
-            value={password2}
-            onChange={(e) => setPassword2(e.target.value)}
-            required
-          />
-        </div>
-        
-        {/* <ReCAPTCHA
-          sitekey={chave_do_site}
-          onChange={handleCaptchaChange}
-        /> */}
-        {loading && <p>Carregando...</p>} 
-        {error && <p>{error}</p>}
-        <button type="submit">
-          <LoginIcon />
-          Cadastrar
-        </button>
+        <ModalContainer>
+          <form onSubmit={handleSubmitStepOne}>
+            <div>
+              <Person />
+              <StyledInput
+                type="name"
+                placeholder="Nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <Mail />
+              <StyledInput
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <VpnKey />
+              <StyledInput
+                type="password"
+                placeholder="Senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+            <div>
+              <VpnKey />
+              <StyledInput
+                type="password"
+                placeholder="Confirmar Senha"
+                value={password2}
+                onChange={(e) => setPassword2(e.target.value)}
+                required
+              />
+            </div>
+            {loading && <p>Carregando...</p>}
+            {error && <p>{error}</p>}
+            <button type="submit">
+              <LoginIcon />
+              Cadastrar
+            </button>
 
-        <div className="signUpOuterContainer">
-          <div onClick={handleLogin} className="signUpContainer">
-            <p className="signUpText">Fazer Login</p>
-          </div>
-        </div>
+            <div className="signUpOuterContainer">
+              <div onClick={handleLogin} className="signUpContainer">
+                <p className="signUpText">Fazer Login</p>
+              </div>
+            </div>
 
-      </form>
-      </ModalContainer>
+          </form>
+        </ModalContainer>
       </Modal>
       {secondStep &&
         <Modal>
           <ModalContainer>
-          <form onSubmit={handleVerificateAccount}>
-            <p>Um código de verificação foi enviado ao email {email}. Insira ele abaixo para validar sua conta.</p>
-            <StyledInput 
-              placeholder="Código de verificação"
-              value={verificationCode}
-              onChange={(e) => setVerificationCode(e.target.value)}
-            />
-            <button type="submit">
-              <LoginIcon />
-              Confirmar
-            </button>
-            {errorVerification && <p>{errorVerification}</p>}
-          </form>
+            <form onSubmit={handleVerificateAccount}>
+              <p>Um código de verificação foi enviado ao email {email}. Insira ele abaixo para validar sua conta.</p>
+              <StyledInput
+                placeholder="Código de verificação"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+              />
+              <button type="submit">
+                <LoginIcon />
+                Confirmar
+              </button>
+              {errorVerification && <p>{errorVerification}</p>}
+            </form>
           </ModalContainer>
         </Modal>
-        }      
+      }
     </LoginContainer>
   );
 };
