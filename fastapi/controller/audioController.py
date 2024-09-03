@@ -40,6 +40,7 @@ def get_audios_by_process_id_db(process_id:int, db:Session):
             "audio_duration": audio.audio_duration,
             "sample_rate": audio.sample_rate,
             "snr": audio.snr,
+            "specialist_analysis": audio.specialist_analysis,
             "created_at": audio.created_at,
             "updated_at": audio.updated_at,
         })
@@ -137,7 +138,7 @@ async def create_audio_db(num_process:str, db: Session, files: List[UploadFile],
             })
 
     if not audiosRegistered:
-        await processController.delete_process_by_numprocess(num_process, BASE_FILE_PATH, db)
+        await processController.delete_process_by_numprocess(num_process, BASE_FILE_PATH, db, user_id)
     
     return {
         "audiosRegisteres": audiosRegistered,
@@ -165,6 +166,17 @@ def update_audio_title_db(audio_id, new_title, db):
         update_process_date_db(audio.process_id, db)
         return {"message": f"Audio ID: {audio_id} teve o title trocado para: {new_title}"}
     raise HTTPException(status_code=404, detail=f"Audio ID {audio_id} não encontrado")
+
+def update_specialist_analysis_db(audio_id:int, analysis:str, db:Session):
+    audio = db.query(Audio).filter(Audio.id == audio_id).first()
+    if not audio:
+        raise HTTPException(status_code=404, detail="Áudio não encontrado")
+    
+    audio.specialist_analysis = analysis
+    db.commit()
+    db.refresh(audio)
+
+    return {"message": "Análise de especialista atualizada com sucesso", "audio": audio}
 
 def convert_to_bool(predicted_class:bool):
     if predicted_class.lower() == 'fake':

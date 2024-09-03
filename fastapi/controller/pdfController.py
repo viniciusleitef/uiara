@@ -5,6 +5,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Image, Spacer, Tabl
 from reportlab.lib import colors
 from reportlab.pdfgen import canvas
 from io import BytesIO
+from datetime import datetime
 from controller.services import get_process_by_numprocess_db
 from controller.audioController import get_audios_by_process_id_db
 from sqlalchemy.orm import Session
@@ -41,7 +42,24 @@ def create_pdf(process, audios: list, db):
         parent=styles['Normal'],
         fontSize=12,
         fontName='Helvetica-Bold',
-        spaceAfter=10
+        spaceAfter=5
+    )
+    label_style_tab = ParagraphStyle(
+        'Label_tab',
+        parent=styles['Normal'],
+        fontSize=12,
+        fontName='Helvetica-Bold',
+        spaceAfter=5,
+        leftIndent=40
+    )
+
+    label_style_tab_bold = ParagraphStyle(
+        'Label_tab',
+        parent=styles['Normal'],
+        fontSize=12,
+        fontName='Helvetica-Bold',
+        spaceAfter=5,
+        leftIndent=80
     )
     normal_style = ParagraphStyle(
         'Normal',
@@ -55,7 +73,7 @@ def create_pdf(process, audios: list, db):
         parent=styles['Normal'],
         fontSize=12,
         fontName='Helvetica',
-        leftIndent=40,
+        leftIndent=80,
         spaceAfter=5
     )
 
@@ -97,20 +115,34 @@ def create_pdf(process, audios: list, db):
     elements.append(report_title)
     elements.append(Paragraph("<br/><br/>", normal_style))
 
+    elements.append(Paragraph("Ao Tribunal Regional Eleitoral da Paraíba (TRE-PB)", label_style))
     formatted_num_process = format_num_process(process.num_process)
     elements.append(Paragraph(f"Processo Nº: {formatted_num_process}", label_style))
-    elements.append(Paragraph(f"Responsável: {process.responsible}", normal_style))
+
+    elements.append(Paragraph(f"Data da Elaboração: {datetime.now().strftime('%d/%m/%Y')}", label_style))
+    elements.append(Paragraph(f"Responsável: {process.responsible}", label_style))
     elements.append(Paragraph("<br/><br/>", normal_style))
 
+    elements.append(Paragraph("1. Objetivo", label_style))
+    elements.append(Paragraph("Avaliar a autenticidade dos áudios recebidos, identificando possíveis deep fakes.", normal_style))
+
+    elements.append(Paragraph("2. Metodologia", label_style))
+    elements.append(Paragraph("Foram realizadas análises detalhadas dos áudios utilizando a ferramenta de detecção UIRA complementadas por uma avaliação técnica conduzida por especialistas na área. Foi utilizada a ferramenta uIAra e análise humana de especialista.", normal_style))
+
+    elements.append(Paragraph("3. Resultados", label_style))
+    
     for i, audio in enumerate(audios):
         model_version_id = audio['trained_model_id']
         model_version = trainedModelsController.get_model_by_id(model_version_id, db)
 
-        elements.append(Paragraph(f"Áudio {i + 1}:", label_style))
+        prefix = chr(97 + i)  
+        prefix = f"{prefix}."  
+
+        elements.append(Paragraph(f"{prefix} Áudio {i + 1}:", label_style_tab))
         elements.append(Paragraph(f"Nome: {audio['title']}", tab_style))
         
         resultado = "Voz Humana" if audio['classification'] else "Voz Sintética"
-        elements.append(Paragraph(f"Resultado da Análise: {resultado}", tab_style))
+        elements.append(Paragraph(f"Análise uIAra: {resultado}", label_style_tab_bold))
         
         elements.append(Paragraph(f"Versão do Modelo: {model_version.version}", tab_style))
         
@@ -127,6 +159,10 @@ def create_pdf(process, audios: list, db):
         elements.append(Paragraph(f"Razão Sinal-Ruído (SNR): {snr}", tab_style))
         
         elements.append(Paragraph(f"Data de Criação do Áudio: {audio['created_at'].strftime('%d/%m/%Y %H:%M:%S')}", tab_style))
+
+        if audio['specialist_analysis'] != None:
+            elements.append(Paragraph(f"Análise dos especialistas: {audio['specialist_analysis']}", label_style_tab_bold))
+
         elements.append(Paragraph("<br/><br/>", normal_style))
     
     doc.build(elements, onFirstPage=add_page_number, onLaterPages=add_page_number)
