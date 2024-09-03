@@ -73,29 +73,40 @@ export const ResultsContainer = styled.div`
 
 export const Audio = styled.div`
   background-color: #eee;
-  display: flex;
-  align-items: center;
-  padding: 20px 15px;
-  margin: 10px 0px;
   border-radius: 6px;
-  justify-content: flex-start;
-  position: relative;
+  
+  .audio-container {
+    display: flex;
+    align-items: center;
+    padding: 20px 15px 0 15px;
+    margin: 10px 0px 0px 0px;
+    justify-content: flex-start;
+    position: relative;
+    gap: 10px;
+  }
+
+  .audio-container-result{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+    margin: 10px 0px 0px 0px;
+    border-radius: 6px;
+  }
 
   .audio {
     display: flex;
     align-items: center;
-    width: 60%;
     overflow: hidden;
     margin-right: 10px;
 
     .audio-info {
-      width: 100%;
       span {
         display: block;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        width: 95%;
+
       }
 
       p {
@@ -110,8 +121,9 @@ export const Audio = styled.div`
     border-radius: 6px;
     padding: 5px 10px;
     color: ${colors.textWhite};
-    width: 100px;
     text-align: center;
+    margin-left: auto;
+    margin-right: 15px;
   }
 
   .classification.true {
@@ -132,7 +144,17 @@ export const Audio = styled.div`
     font-size: 0.8rem;
     color: ${colors.textWhite};
     background-color: ${colors.secondary};
-    position: absolute;
-    right: 10px;
+  }
+
+  .audioPlayer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px
+  }
+
+  .playerButton{
+    margin: 10px
   }
 `;
+

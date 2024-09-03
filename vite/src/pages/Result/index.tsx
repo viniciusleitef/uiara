@@ -50,12 +50,16 @@ export const Result = () => {
       <BackPage to="/results" />
       <div>
       <p>Número do Processo: #{numProcess ? formatProcessNumber(numProcess) : 'N/A'}</p>
-        {audios.map((audio, index) => (
-          <Audio key={index}>
+        {audios.map((audio) => (
+          <Audio key={audio.id}>
+          <div className="audio-container-result"> 
             <div className="audio">
               <AudioFile />
-              <span>{audio.title}</span>
+              <div className="audio-info">
+                <span>{audio.title}</span>
+              </div>
             </div>
+
             <div
               className={`classification ${
                 audio.classification ? "true" : "false"
@@ -64,7 +68,9 @@ export const Result = () => {
               {audio.classification ? "Humano" : "Sintético"}
             </div>
             <div className="accuracy">{audio.accuracy}%</div>
-          </Audio>
+
+          </div>
+        </Audio>
         ))}
       </div>
       

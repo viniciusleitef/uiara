@@ -11,6 +11,15 @@ class AudioService {
     }
   }
 
+  async getAudioFile(audio_id: number) {
+    try {
+      const response = await api.get(`/audioFile/${audio_id}`, { responseType: 'blob' });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getAllAudios() {
     try {
       const response = await api.get("/processesWithAudios");

@@ -19,6 +19,8 @@ export const AllResults = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [popupVisible, setPopupVisible] = useState(false);
   const [selectedProcess, setSelectedProcess] = useState<string | null>(null);
+  const [playingAudioId, setPlayingAudioId] = useState<number | null>(null);
+  const [audioURL, setAudioURL] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -110,6 +112,22 @@ export const AllResults = () => {
     return `${year}-${month}-${day}`;
   }
 
+  const handlePlayClick = async (audioId: number) => {
+    if (playingAudioId === audioId) {
+      setPlayingAudioId(null);
+      setAudioURL(null); // Pausar o áudio
+      return;
+    }
+  
+    // Definindo o novo áudio a ser reproduzido
+    const newAudioURL = `http://0.0.0.0:8302/audioFile/${audioId}`; // URL do back-end diretamente para streaming
+    
+    // Atualiza o ID do áudio que está sendo reproduzido e a URL do áudio
+    setPlayingAudioId(audioId);
+    setAudioURL(newAudioURL);
+    console.log(newAudioURL);
+  };
+
   return (
     <>
       <BackPage to="/home" />
@@ -166,21 +184,38 @@ export const AllResults = () => {
               </div>
               {process.audios.map((audio) => (
                 <Audio key={audio.id}>
-                  <div className="audio">
-                    <AudioFile />
-                    <div className="audio-info">
-                      <span>{audio.title}</span>
-                      <p>Duração {formatDuration(audio.audio_duration)}</p>
+                  <div className="audio-container"> 
+                    <div className="audio">
+                      <AudioFile />
+                      <div className="audio-info">
+                        <span>{audio.title}</span>
+                        <p>Duração {formatDuration(audio.audio_duration)}</p>
+                       
+                      </div>
+
                     </div>
+
+                    <div
+                      className={`classification ${
+                        audio.classification ? "true" : "false"
+                      }`}
+                    >
+                      {audio.classification ? "Humano" : "Sintético"}
+                    </div>
+                    <div className="accuracy">{audio.accuracy}%</div>
+
                   </div>
-                  <div
-                    className={`classification ${
-                      audio.classification ? "true" : "false"
-                    }`}
-                  >
-                    {audio.classification ? "Humano" : "Sintético"}
-                  </div>
-                  <div className="accuracy">{audio.accuracy}%</div>
+
+                  <div className="audioPlayer">
+                    
+                    <button onClick={() => handlePlayClick(audio.id)} className="playerButton">
+                      {playingAudioId === audio.id ? 'Parar' : 'Reproduzir'}
+                    </button>
+
+                    {playingAudioId === audio.id && audioURL && (
+                      <audio src={audioURL} controls autoPlay preload=""/>
+                        )}
+                  </div>    
                 </Audio>
               ))}
             </div>

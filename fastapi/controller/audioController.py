@@ -1,5 +1,5 @@
 from fastapi import UploadFile, HTTPException
-from fastapi.responses import FileResponse
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from models.models import Audio
 from pydub import AudioSegment
@@ -45,10 +45,29 @@ def get_audios_by_process_id_db(process_id:int, db:Session):
         })
     return audioList
 
-async def get_audioFile(audio_id: int, db:Session):
+async def get_audioFile(audio_id: int, db: Session):
     audio = get_audio_by_id_db(audio_id, db)
     filePath = audio.url
-    return FileResponse(path=filePath, media_type='audio/wav', filename=os.path.basename(filePath))
+
+    # Verifica se o arquivo existe
+    if not os.path.exists(filePath):
+        raise HTTPException(status_code=404, detail="Arquivo de áudio não encontrado")
+
+    # Função geradora para fazer o streaming do arquivo
+    def iterfile():
+        with open(filePath, mode="rb") as file_like:
+            yield from file_like
+
+    file_size = os.path.getsize(filePath)
+    headers = {
+        "Content-Disposition": f"inline; filename={os.path.basename(filePath)}",
+        "Accept-Ranges": "bytes",
+        "Content-Length": str(file_size),
+        "Cache-Control": "no-cache"
+    }
+
+    # Retorna o StreamingResponse com os cabeçalhos necessários
+    return StreamingResponse(iterfile(), media_type="audio/wav", headers=headers)
 
 async def create_audio_db(num_process:str, db: Session, files: List[UploadFile], user_id):
 

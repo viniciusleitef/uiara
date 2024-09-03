@@ -50,6 +50,10 @@ export const LoadedAudio = styled.div`
   p {
     margin-left: 10px;
   }
+  
+  audio{
+    margin-right: 10px;
+  }
 `;
 
 export const ButtonFooter = styled.div`

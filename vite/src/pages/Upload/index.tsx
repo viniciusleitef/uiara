@@ -309,6 +309,10 @@ export const Upload = () => {
                 >
                   {file.name}
                 </Typography>
+                <audio controls>
+                  <source src={URL.createObjectURL(file)} type={file.type} />
+                  Your browser does not support the audio element.
+                </audio>
 
                 <IconButton
                   onClick={() => removeFile(index)}

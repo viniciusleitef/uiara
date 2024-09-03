@@ -17,7 +17,7 @@ def get_audios_by_process_id(num_process: str, db: Session = Depends(get_db), cu
     return get_audios_by_process_id_db(process.id, db)
 
 @router.get("/audioFile/{audio_id}")
-async def get_audioFile_by_url(audio_id: int, db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
+async def get_audioFile_by_url(audio_id: int, db: Session = Depends(get_db)):
     Validation.has_audiofile(audio_id, db)
     return await get_audioFile(audio_id, db)
 
