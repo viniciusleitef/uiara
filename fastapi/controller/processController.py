@@ -52,7 +52,7 @@ async def create_process_db(process, db, user_id):
 
     new_process = create_process(process, STATUS_ID, db, user_id)
     print("TESTE1.5")
-    create_process_dir(new_process.id, BASE_FILE_PATH)
+    create_process_dir(new_process.id, BASE_FILE_PATH, db)
     print("TESTE2")
 
     return new_process
@@ -77,18 +77,19 @@ def create_process(process:ProcessSchema, status_id:int, db:Session, user_id:str
     
     return new_process
 
-def create_process_dir(process_id:int, BaseFilePath:str):
+def create_process_dir(process_id:int, BaseFilePath:str, db:Session):
     pasta_process = f"{BaseFilePath}/Process_{process_id}"
     try:
         os.makedirs(pasta_process, exist_ok=True)
         print(f"Pasta '{pasta_process}' criada com sucesso!")
     except Exception as e:
+        delete_process_dir(process_id, BaseFilePath)
+        delete_process_db(process_id, db)
         print(f"Ocorreu um erro ao criar a pasta: {e}")
 
 async def delete_process_by_numprocess(num_process:str, base_filepath:str, db:Session, user_id: str):
     # Pegando process para pegar o id
     process = get_process_by_numprocess_db(num_process, db, user_id)
-    print("CHEGUEI AQUI")
 
     await delete_process_dir(process.id, base_filepath)
     delete_audios_db(process.id, db)
