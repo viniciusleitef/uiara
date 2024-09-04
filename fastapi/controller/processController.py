@@ -48,12 +48,9 @@ async def create_process_db(process, db, user_id):
         raise HTTPException(status_code=400, detail="Nenhum modelo ativo encontrado")
     
     # Verificar se todos os audios foram validos
-    print("TESTE")
 
     new_process = create_process(process, STATUS_ID, db, user_id)
-    print("TESTE1.5")
     create_process_dir(new_process.id, BASE_FILE_PATH, db)
-    print("TESTE2")
 
     return new_process
 
