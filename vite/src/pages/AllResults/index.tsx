@@ -21,6 +21,7 @@ export const AllResults = () => {
   const [selectedProcess, setSelectedProcess] = useState<string | null>(null);
   const [playingAudioId, setPlayingAudioId] = useState<number | null>(null);
   const [audioURL, setAudioURL] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -128,10 +129,18 @@ export const AllResults = () => {
     console.log(newAudioURL);
   };
 
+  const filteredProcesses = processes.filter(
+    (process) =>
+      process.num_process.includes(search)
+  );
+
   return (
     <>
       <BackPage to="/home" />
       <ResultsContainer>
+        <div className="search-bar">
+          <input type="text" placeholder="Pesquisar processo" value={search} onChange={(e) => setSearch(e.target.value)}/>
+        </div>
         {isLoading ? (
           <div
             style={{
@@ -143,7 +152,7 @@ export const AllResults = () => {
             <CircularProgress />
           </div>
         ) : (
-          processes.map((process) => (
+          filteredProcesses.map((process) => (
             <div key={process.id}>
               <div className="info-box">
                 <div className="infos">

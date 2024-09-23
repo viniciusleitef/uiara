@@ -4,17 +4,17 @@ import colors from "../../styles/colors";
 export const ResultsContainer = styled.div`
   overflow-y: auto;
 
-  .teste {
+  .search-bar{
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 1;
+  }
+
+  .search-bar input{
+    border: 2px solid #1b305a;
+    border-radius: 10px;
+    padding: 5px;
   }
 
   .info-box {
