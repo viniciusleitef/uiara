@@ -78,27 +78,9 @@ async def create_audio_db(num_process:str, db: Session, files: List[UploadFile],
     audiosRegistered = []
 
     for i, file in enumerate(files):
-        fileLocation = f"{BASE_FILE_PATH}/Process_{process.id}/{file.filename}"
-        audio = get_audio_by_url_db(fileLocation, db)
-
-        if audio and audio.url == fileLocation:
-            errors.append({
-                "file": file.filename,
-                "error": "Áudio ja esta cadastrado nesse processo",
-                "status_code": 409
-            })
-            continue
         
-        if not file.filename.endswith(('.wav')):
-            print("teste")
-            errors.append({
-                "file": file.filename,
-                "error": "O arquivo não é um arquivo WAV válido.",
-                "status_code": 400
-            })
-            continue      
-
-        await create_audio_file(file, fileLocation)
+        fileLocation = await detect_audio_format(file, process.id)
+        
         audio_duration = await get_audio_duration(file)
         sample_rate = await get_sample_rate(file)
         snr = await calculate_snr(fileLocation)
@@ -295,3 +277,41 @@ def delete_audios_db(process_id:int, db:Session):
     except Exception as e:
         print(f"Ocorreu um erro ao excluir os áudios: {e}")
         raise HTTPException(status_code=500, detail=f"An error occurred while deleting the audios: {str(e)}")
+    
+#Funções para detecção e conversão de arquivos de áudio
+#Detecção to tipo de arquivo
+async def detect_audio_format(file: UploadFile, process_id: int) -> str:
+    file_extension = file.filename.split('.')[-1].lower()
+
+    base_path = f"{BASE_FILE_PATH}/Process_{process_id}"
+    if not os.path.exists(base_path):
+        os.makedirs(base_path)
+
+    if file_extension == "mp3":
+        converted_file_path = await convert_mp3_to_wav(file, base_path)
+        await create_audio_file(file, converted_file_path)
+        return converted_file_path
+    elif file_extension == "ogg":
+        converted_file_path = await convert_ogg_to_wav(file, base_path)
+        await create_audio_file(file, converted_file_path)
+        return converted_file_path
+    elif file_extension == "wav":
+        file_path = os.path.join(base_path, file.filename)
+        await create_audio_file(file, file_path)
+        return file_path
+    else:
+        raise HTTPException(status_code=400, detail=f"Unsuported audio format: {file_extension}")
+    
+#Conversão modularizada de .mp3 para .wav
+async def convert_mp3_to_wav(file: UploadFile, base_path: str):
+    audio = AudioSegment.from_mp3(file.file)
+    output_path = os.path.join(base_path, file.filename.replace(".mp3", ".wav"))
+    audio.export(output_path, format="wav")
+    return output_path
+
+#Conversão modularizada de .ogg para .wav
+async def convert_ogg_to_wav(file: UploadFile, base_path: str) -> str:
+    audio = AudioSegment.from_ogg(file.file)
+    output_path = os.path.join(base_path, file.filename.replace(".ogg", ".wav"))
+    audio.export(output_path, format="wav")
+    return output_path
