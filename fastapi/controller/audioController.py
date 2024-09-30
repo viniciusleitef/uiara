@@ -288,17 +288,14 @@ async def detect_audio_format(file: UploadFile, process_id: int) -> str:
         os.makedirs(base_path)
 
     if file_extension == "mp3":
-        converted_file_path = await convert_mp3_to_wav(file, base_path)
-        await create_audio_file(file, converted_file_path)
-        return converted_file_path
+        return await convert_mp3_to_wav(file, base_path)
     elif file_extension == "ogg":
-        converted_file_path = await convert_ogg_to_wav(file, base_path)
-        await create_audio_file(file, converted_file_path)
-        return converted_file_path
+        return await convert_ogg_to_wav(file, base_path)
     elif file_extension == "wav":
         file_path = os.path.join(base_path, file.filename)
         await create_audio_file(file, file_path)
         return file_path
+
     else:
         raise HTTPException(status_code=400, detail=f"Unsuported audio format: {file_extension}")
     

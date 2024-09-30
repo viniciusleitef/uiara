@@ -38,6 +38,7 @@ class AudioService {
       });
       return response;
     } catch (error) {
+      console.error("Error in postAudio", error);
       throw error;
     }
   }
