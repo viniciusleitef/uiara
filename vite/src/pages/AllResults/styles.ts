@@ -99,7 +99,7 @@ export const Audio = styled.div`
 
   .audio-container-result{
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-around;
     align-items: center;
     padding: 20px;
     margin: 10px 0px 0px 0px;
@@ -170,11 +170,17 @@ export const Audio = styled.div`
   }
   
   @media (max-width: 500px) {
-  .audio-container{
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+    .audio-container{
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+      
+    .audio-container-result{
+      flex-direction: column;
+      gap: 20px;
+    }
   }
 
   .classification{
@@ -183,10 +189,6 @@ export const Audio = styled.div`
 
   .audioPlayer{
     flex-direction: column;
-  }
-
-  .teste{
-    width: 100%;
   }
 `;
 
