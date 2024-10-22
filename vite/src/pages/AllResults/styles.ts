@@ -9,12 +9,15 @@ export const ResultsContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
+    margin: 10px 0;
+    }
+    
   .search-bar input{
+    color: black;
     border: 2px solid #1b305a;
     border-radius: 10px;
     padding: 5px;
+    background: unset;
   }
 
   .info-box {
@@ -69,6 +72,15 @@ export const ResultsContainer = styled.div`
       margin-bottom: 0;
     }
   }
+
+   @media (max-width: 500px) {
+    .info-box{
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+   }
 `;
 
 export const Audio = styled.div`
@@ -155,6 +167,26 @@ export const Audio = styled.div`
 
   .playerButton{
     margin: 10px
+  }
+  
+  @media (max-width: 500px) {
+  .audio-container{
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .classification{
+    margin: 0;
+  }
+
+  .audioPlayer{
+    flex-direction: column;
+  }
+
+  .teste{
+    width: 100%;
   }
 `;
 

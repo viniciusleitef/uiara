@@ -222,7 +222,7 @@ export const AllResults = () => {
                     </button>
 
                     {playingAudioId === audio.id && audioURL && (
-                      <audio src={audioURL} controls autoPlay preload=""/>
+                      <audio className="teste" src={audioURL} controls autoPlay preload=""/>
                         )}
                   </div>    
                 </Audio>

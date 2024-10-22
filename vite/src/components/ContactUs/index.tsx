@@ -1,5 +1,5 @@
 import ContactSupportIcon from "@mui/icons-material/ContactSupport";
-import { Container } from "./styles";
+import { Container, ContainerBox, containerBox } from "./styles";
 import { useNavigate } from "react-router-dom";
 
 export const ContactUs = () => {
@@ -10,9 +10,11 @@ export const ContactUs = () => {
   };
 
   return (
-    <Container onClick={handleClick}>
-      <p>Precisa de ajuda? Fale conosco aqui</p>
-      <ContactSupportIcon />
-    </Container>
+    <ContainerBox>
+      <Container onClick={handleClick}>
+        <p>Precisa de ajuda? Fale conosco aqui</p>
+        <ContactSupportIcon />
+      </Container>
+    </ContainerBox>
   );
 };
