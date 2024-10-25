@@ -22,8 +22,9 @@ import { CircularProgress, InputAdornment, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { BackPage } from "../../components/BackPage";
 import { AudioProps } from "../../types";
+import { AuthContext } from "../../app/context/AuthContext";
+import React, { useContext } from "react";
 import InputMask from 'react-input-mask';
-import React from 'react';
 
 export const Upload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -41,13 +42,18 @@ export const Upload = () => {
   const location = useLocation();
 
   const { process } = location.state || {};
-
+  const { user } = useContext(AuthContext);
+  
   useEffect(() => {
     if (process) {
       setProcessNumber(process.num_process);
-      setResponsible(process.responsible);
       setTitle(process.title);
       setExistingFiles(process.audios);
+      setResponsible(process.responsible);
+    }
+
+    if(user){
+      setResponsible(user.username)
     }
   }, [process]);
 
@@ -170,7 +176,6 @@ export const Upload = () => {
       // console.log("BEFORE processService");
       await processService.postProcess(processPayLoad);
       // console.log("AFTER processService");
-
       // console.log("BEFORE formData");
       const formData = new FormData();
       // console.log("AFTER formData");
@@ -242,7 +247,7 @@ export const Upload = () => {
               fullWidth
               value={responsible}
               onChange={(e) => setResponsible(e.target.value)}
-              disabled={process}
+              disabled={process || user}
             />
           </Box>
           <TextField

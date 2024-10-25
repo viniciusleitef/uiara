@@ -28,7 +28,9 @@ class UserService {
                 password: userPassword,
                 verification_code: "",
             }
+            console.log(import.meta.env.VITE_API_URL)
             const response = await api.post('/login', userPayload);
+            console.log(response)
             return response.data;
         } catch (error) {
             throw error;
@@ -100,6 +102,7 @@ class UserService {
                 password: password,
                 verification_code: "",
             }
+            console.log("teste")
             const response = await api.post('/user', userPayload);
             return response;
         } catch (error) {

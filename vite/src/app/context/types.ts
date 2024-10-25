@@ -13,7 +13,8 @@ export interface AuthContextData {
 export interface UserProps {
   id?: number;
   email: string;
-  password: string;
+  password?: string;
+  username: string;
 }
 
 export interface CreateUserPayload {
