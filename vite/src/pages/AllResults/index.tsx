@@ -121,7 +121,7 @@ export const AllResults = () => {
     }
   
     // Definindo o novo áudio a ser reproduzido
-    const newAudioURL = `http://0.0.0.0:8302/audioFile/${audioId}`; // URL do back-end diretamente para streaming
+    const newAudioURL = audioService.getAudioFileURL(audioId);
     
     // Atualiza o ID do áudio que está sendo reproduzido e a URL do áudio
     setPlayingAudioId(audioId);
