@@ -190,5 +190,24 @@ export const Audio = styled.div`
   .audioPlayer{
     flex-direction: column;
   }
+
+  .visualizar-processos{
+    position: absolute;
+    top: 70px;
+    right: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 4px 8px;
+    transition: background-color 0.3s;
+  }
+
+  .visualizar-processos p{
+    margin: 0;
+  }
+
+  .visualizar-processos: hover{
+    background-color: ${colors.secondary}10;
+    
+  }
 `;
 
