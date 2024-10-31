@@ -223,11 +223,6 @@ export const Upload = () => {
                   label="Número do Processo"
                   variant="outlined"
                   fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start"></InputAdornment>
-                    ),
-                  }}
                   InputLabelProps={{
                     shrink: true,
                   }}
