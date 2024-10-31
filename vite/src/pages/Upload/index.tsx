@@ -225,7 +225,7 @@ export const Upload = () => {
                   fullWidth
                   InputProps={{
                     startAdornment: (
-                      <InputAdornment position="start">#</InputAdornment>
+                      <InputAdornment position="start"></InputAdornment>
                     ),
                   }}
                   InputLabelProps={{
