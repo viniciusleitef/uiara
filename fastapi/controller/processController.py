@@ -51,7 +51,6 @@ async def create_process_db(process, db, user_id):
 
     new_process = create_process(process, STATUS_ID, db, user_id)
     create_process_dir(new_process.id, BASE_FILE_PATH, db)
-
     return new_process
 
 def create_process(process:ProcessSchema, status_id:int, db:Session, user_id:str):

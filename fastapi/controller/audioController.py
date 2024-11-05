@@ -14,7 +14,7 @@ import os
 import controller.processController as processController
 
 from controller.services import get_process_by_numprocess_db, get_audio_by_url_db, get_audio_by_id_db, update_process_status, update_process_date_db, get_process_by_process_id
-from controller.trainedModelsController import get_active_models_filepath
+from controller.trainedModelsController import get_active_model
 
 from trained_model.executaModelo import analyzingAudio
 
@@ -72,7 +72,7 @@ async def get_audioFile(audio_id: int, db: Session):
 
 async def create_audio_db(num_process:str, db: Session, files: List[UploadFile], user_id):
 
-    ai_model = get_active_models_filepath(db)
+    ai_model = get_active_model(db)
     process = get_process_by_numprocess_db(num_process, db, user_id)
     errors = []
     audiosRegistered = []

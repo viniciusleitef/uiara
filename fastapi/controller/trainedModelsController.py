@@ -7,14 +7,11 @@ from schemas.TrainedModels import TrainedModelsSchema
 
 from config import BASE_TRAINED_MODELS_PATH
 
+def get_all_models(db: Session):
+    return db.query(TrainedModels).all()
+
 def get_active_model(db: Session):
-    return db.query(TrainedModels).filter(TrainedModels.status == True).first()
-
-def get_active_models_filepath(db: Session):
-    model = get_active_model(db)
-    if model is None:
-        raise HTTPException(status_code=404, detail="No active AI_model found")
-
+    model = db.query(TrainedModels).filter(TrainedModels.status == True).first()
     return model
 
 def get_model_by_id(model_id: int, db: Session):
@@ -22,9 +19,7 @@ def get_model_by_id(model_id: int, db: Session):
 
 async def create_model_version_db(model_version: TrainedModelsSchema, file: UploadFile,db: Session):
     db_model_version = db.query(TrainedModels).filter(
-        TrainedModels.model_name == file.filename,
-        TrainedModels.version == model_version.version
-    ).first()
+        TrainedModels.model_name == file.filename).first()
     
     if db_model_version is not None:
         raise HTTPException(status_code=400, detail="Model version already exists")
@@ -80,11 +75,16 @@ def create_model_version_dir(file: UploadFile, base_file_path: str):
 
 def update_model_version_db(model_version_id: int, db:Session):
     model_version = db.query(TrainedModels).filter(TrainedModels.id == model_version_id).first()
+    actual_model_version = get_active_model(db)
     if model_version is None:
         raise HTTPException(status_code=404, detail="Model version not found")
     
     model_version.status = not model_version.status
     model_version.updated_at = datetime.now()
+
+    if actual_model_version is not None:
+        actual_model_version.status = not actual_model_version.status
+        actual_model_version.updated_at = datetime.now()
 
     db.commit()
     db.refresh(model_version)
@@ -100,3 +100,11 @@ def update_model_status(db: Session):
 
             db.commit()
             db.refresh(model)
+
+def delete_model_version_db(model_version_id: int, db: Session):
+    model_version = db.query(TrainedModels).filter(TrainedModels.id == model_version_id).first()
+    if model_version is None:
+        raise HTTPException(status_code=404, detail="Model version not found")
+    db.delete(model_version)
+    db.commit()
+    return {'message': 'Model version deleted successfully'}

@@ -89,7 +89,7 @@ def login_user_db(user: UserSchema, db: Session):
 
             if db_user.is_verified:
                 # Create jwt token with expiration of 24 hours
-                jwt_token = create_jwt_token(db_user.email, db_user.username, db_user.id)
+                jwt_token = create_jwt_token(db_user.email, db_user.username, db_user.id, db_user.type)
                 return {"token": jwt_token}
             else: 
                 verification_expiration_time = generate_expiration_time()

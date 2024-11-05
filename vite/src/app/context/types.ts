@@ -15,6 +15,7 @@ export interface UserProps {
   email: string;
   password?: string;
   username: string;
+  type?: string;
 }
 
 export interface CreateUserPayload {

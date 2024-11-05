@@ -30,11 +30,12 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
           }
           console.log(captchaToken);
           const { token } = await userService.loginStepOne(email, password);
-          const decodedToken: { email: string; username: string; id: number;} = jwtDecode(token);
+          const decodedToken: { email: string; username: string; id: number; type: string} = jwtDecode(token);
           const newUser = {
             id: decodedToken.id,
             email: decodedToken.email,
             username: decodedToken.username,
+            type: decodedToken.type
           };
           localStorage.setItem("jwtToken", token);
           localStorage.setItem("user", JSON.stringify(newUser))

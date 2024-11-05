@@ -56,6 +56,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String, nullable=False, unique=False)
     email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     hashed_password: Mapped[str] = mapped_column(String, nullable=False, unique=False)
+    type: Mapped[str] = mapped_column(String, nullable=True)
     created_at: Mapped[str] = mapped_column(Date)
     updated_at: Mapped[str] = mapped_column(Date)
     verification_code = mapped_column(String(30), nullable=True)
