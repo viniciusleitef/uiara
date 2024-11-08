@@ -34,3 +34,16 @@ export interface ErrorAudio{
   error: string;
   status_code: number;
 }
+
+export interface Model {
+  id: number;
+  model_name: string;
+  version: string;
+  description?: string;
+  file_path: string;
+  accuracy?: number;
+  loss?: number;
+  status: boolean;
+  created_at: Date;
+  updated_at: Date; 
+}

@@ -28,3 +28,10 @@ export const Container = styled.div`
     transition: fill 0.3s;
   }
 `;
+
+export const ContainerBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-itens: center;
+  margin-top: 50px;
+`;

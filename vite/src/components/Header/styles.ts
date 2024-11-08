@@ -47,11 +47,10 @@ export const WhiteHeader = styled.div`
     @media (max-width: 576px) {
       width: 100%;
       padding: 0 15px;
+      img{
+        width: 85px;
+      }
     }
-  }
-
-  .tre-div {
-
   }
 
   .logout-div {

@@ -19,19 +19,24 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   });
 
   const haveAuth = import.meta.env.VITE_HAVE_AUTH
-
   const navigate = useNavigate();
 
   const signInStepOne = useCallback(
     async (email: string, password: string, captchaToken: string): Promise<void> => {
       return new Promise(async (resolve, reject) => {
-        const newUser = { email, password };
         try {
           if (haveAuth == 1) {
             await userService.verifyCaptcha(captchaToken);
           }
           console.log(captchaToken);
           const { token } = await userService.loginStepOne(email, password);
+          const decodedToken: { email: string; username: string; id: number; type: string} = jwtDecode(token);
+          const newUser = {
+            id: decodedToken.id,
+            email: decodedToken.email,
+            username: decodedToken.username,
+            type: decodedToken.type
+          };
           localStorage.setItem("jwtToken", token);
           localStorage.setItem("user", JSON.stringify(newUser))
           navigate("/");

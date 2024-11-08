@@ -9,12 +9,15 @@ export const ResultsContainer = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-  }
-
+    margin: 10px 0;
+    }
+    
   .search-bar input{
+    color: black;
     border: 2px solid #1b305a;
     border-radius: 10px;
     padding: 5px;
+    background: unset;
   }
 
   .info-box {
@@ -69,6 +72,15 @@ export const ResultsContainer = styled.div`
       margin-bottom: 0;
     }
   }
+
+   @media (max-width: 500px) {
+    .info-box{
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+   }
 `;
 
 export const Audio = styled.div`
@@ -87,7 +99,7 @@ export const Audio = styled.div`
 
   .audio-container-result{
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-around;
     align-items: center;
     padding: 20px;
     margin: 10px 0px 0px 0px;
@@ -155,6 +167,47 @@ export const Audio = styled.div`
 
   .playerButton{
     margin: 10px
+  }
+  
+  @media (max-width: 500px) {
+    .audio-container{
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+      
+    .audio-container-result{
+      flex-direction: column;
+      gap: 20px;
+    }
+  }
+
+  .classification{
+    margin: 0;
+  }
+
+  .audioPlayer{
+    flex-direction: column;
+  }
+
+  .visualizar-processos{
+    position: absolute;
+    top: 70px;
+    right: 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 4px 8px;
+    transition: background-color 0.3s;
+  }
+
+  .visualizar-processos p{
+    margin: 0;
+  }
+
+  .visualizar-processos: hover{
+    background-color: ${colors.secondary}10;
+    
   }
 `;
 

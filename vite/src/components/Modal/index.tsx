@@ -14,7 +14,6 @@ export const Modal = ({ children }: ModalProps) => {
         uIAra
       </Title>
       <ModalContent>{children}</ModalContent>
-      <ContactUs />
       <Developer
         href="https://sites.google.com/view/laser-ufpb/in%C3%ADcio"
         target="_blank"
@@ -22,6 +21,7 @@ export const Modal = ({ children }: ModalProps) => {
       >
         Desenvolvido por <img src={laser_logo} alt="logo" />
       </Developer>
+      <ContactUs />
     </ModalContainer>
   );
 };

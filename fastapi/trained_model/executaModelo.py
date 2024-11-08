@@ -3,7 +3,6 @@ import numpy as np
 import librosa
 import wave
 from tensorflow.keras.models import load_model
-from controller.trainedModelsController import get_active_models_filepath
 
 # Função que calcula tamanho do arquivo
 def tamanho_em_segundos(caminho_arquivo):

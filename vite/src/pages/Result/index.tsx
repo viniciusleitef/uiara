@@ -5,13 +5,14 @@ import { ErrorAudio } from "../../types"
 import { AudioProps } from "../../types";
 import { AudioFile } from "@mui/icons-material";
 import { BackPage } from "../../components/BackPage";
-import { Audio } from "../AllResults/styles";
-import { useLocation } from 'react-router-dom';''
+import { Audio} from "../AllResults/styles";
+import { useLocation, useNavigate } from 'react-router-dom';''
 
 export const Result = () => {
   const { numProcess } = useParams();
   const [audios, setAudios] = useState<AudioProps[]>([]);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const { audioResponseData } = location.state || {};
   const hasErrors = audioResponseData && audioResponseData.errors && audioResponseData.errors.length > 0;
@@ -47,7 +48,7 @@ export const Result = () => {
 
   return (
     <>
-      <BackPage to="/results" />
+      <BackPage to="/upload" />
       <div>
       <p>Número do Processo: #{numProcess ? formatProcessNumber(numProcess) : 'N/A'}</p>
         {audios.map((audio) => (
@@ -83,6 +84,11 @@ export const Result = () => {
           ))}
         </div>
       )}
+      <Audio>
+        <div className="visualizar-processos" onClick={() => navigate('/results')}>
+            <p>Visualizar processos</p>
+        </div>
+      </Audio>
     </>
   );
 };
