@@ -345,7 +345,7 @@ async def convert_ogg_to_wav(upload_file: UploadFile):
         output_io.seek(0)
 
         converted_file = UploadFile(
-            filename=upload_file.filename.replace(".mp3", ".wav"),
+            filename=upload_file.filename.replace(".ogg", ".wav"),
             file=output_io
         )
         return converted_file
