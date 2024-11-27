@@ -2,7 +2,7 @@ import api from "..";
 
 class AudioService {
   getAudioFileURL(audioId: number): string {
-    return `${api.defaults.baseURL}audioFile/${audioId}`;
+    return `${api.defaults.baseURL}/audioFile/${audioId}`;
   }
   
   async getAudios(numProcess: string) {
