@@ -39,4 +39,4 @@ async def analyzingAudio(filePath, model_path):
 
     # Imprimir o resultado
     print(f"Predicao: {prediction}, Classe predita: {predicted_class}")
-    return prediction[0][0], predicted_class
+    return float(prediction[0][0]), predicted_class

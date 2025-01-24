@@ -84,7 +84,7 @@ async def create_audio_db(num_process: str, db: Session, files: List[UploadFile]
 
         # Cria o arquivo convertido com sufixo "_converted"
         converted_file = await detect_audio_format(file)
-        converted_file_location = f"{BASE_FILE_PATH}/Process_{process.id}/{converted_file.filename}"
+        converted_file_location = f"{BASE_FILE_PATH}/Process_{process.id}/{'Converted_'+converted_file.filename}"
 
         # Cria o arquivo convertido no local adequado
         await create_audio_file(converted_file, converted_file_location)
@@ -185,6 +185,7 @@ async def create_audio_file(file:UploadFile, file_location:str):
         async with aiofiles.open(file_location, 'wb') as out_file:
             content = await file.read()
             await out_file.write(content)
+            await file.seek(0)
         return file_location    
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
@@ -242,7 +243,7 @@ async def calculate_snr(file_path: str):
     # Calcular a SNR
     snr = calculate_snr(signal, noise_estimation)
     snr_rounded = round(snr, 2)
-    return snr_rounded
+    return float(snr_rounded)
 
 def delete_audio(audio_id, db):
     audio = db.query(Audio).filter(Audio.id == audio_id).first()
