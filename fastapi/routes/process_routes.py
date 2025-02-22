@@ -20,6 +20,7 @@ def get_process_by_numprocess(num_process: str, db: Session = Depends(get_db), c
 
 @router.get("/processes")
 def get_all_process(db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
+    print('Entrei na get de processes')
     return get_all_process_db(db, current_user.get("user_id"))
 
 @router.get("/processesWithAudios")
@@ -33,6 +34,7 @@ async def delete_process(num_process: str, db: Session = Depends(get_db), curren
 
 @router.post("/process")
 async def create_process(process: ProcessSchema, db: Session = Depends(get_db), current_user: Dict[str, Any] = Depends(get_current_user)):
+    print('Entrei na post de process')
     return await create_process_db(process, db, current_user.get("user_id"))
 
 @router.put("/process/{num_process}")

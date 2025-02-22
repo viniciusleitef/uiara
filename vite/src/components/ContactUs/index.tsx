@@ -1,5 +1,5 @@
 import ContactSupportIcon from "@mui/icons-material/ContactSupport";
-import { Container, ContainerBox, containerBox } from "./styles";
+import { Container, ContainerBox } from "./styles";
 import { useNavigate } from "react-router-dom";
 
 export const ContactUs = () => {

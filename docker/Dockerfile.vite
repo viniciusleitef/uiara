@@ -4,14 +4,10 @@ WORKDIR /app
 
 COPY ./vite/package.json ./package.json
 
-RUN npm i
+RUN npm install
 
 COPY ./vite /app
 
-COPY ./docker/entrypoint_vite.sh /app/
-
-RUN chmod +x /app/entrypoint_vite.sh
-
 EXPOSE 8305
 
-CMD [ "/app/entrypoint_vite.sh" ] 
+CMD ["sh", "-c", "npm run build && npm run preview"]

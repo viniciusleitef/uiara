@@ -2,7 +2,7 @@ import api from "..";
 
 class AudioService {
   getAudioFileURL(audioId: number): string {
-    return `${api.defaults.baseURL}/audioFile/${audioId}`;
+    return `${api.defaults.baseURL}audioFile/${audioId}`;
   }
   
   async getAudios(numProcess: string) {
@@ -35,6 +35,7 @@ class AudioService {
 
   async postAudio(formData: FormData){
     try {
+      console.log("formData", formData);
       const response = await api.post("/upload-audios", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
