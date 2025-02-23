@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ButtonFooter,
   Fields,
@@ -222,7 +222,7 @@ export const Upload = () => {
               onChange={handleChange}
               disabled={process}
             >
-              {((inputProps: any): ReactNode => (
+              {((inputProps: any) => (
                 <TextField
                   {...inputProps}
                   label="Número do Processo"
@@ -238,7 +238,7 @@ export const Upload = () => {
                   }}
                   disabled={process}
                 />
-              ))as unknown as ReactNode}
+              ))}
             </InputMask>
             
             <TextField
