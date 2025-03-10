@@ -1,38 +1,43 @@
-services:
-  fastapi:
-    container_name: detectai_fastapi
-    depends_on:
-      - postgres
-    image: detectai_fastapi_image:latest
-    ports:
-      - 8302:8302
-    env_file:
-      - ../.env
+  services:
+    fastapi:
+      container_name: detectai_fastapi
+      depends_on:
+        - postgres
+      image: detectai_fastapi_image:latest
+      ports:
+        - 8302:8302
+      volumes:
+        - ./models:/var/lib/models/
+        - ./audios:/var/lib/audios/
+      env_file:
+        - ../.env
 
-  vite:
-    container_name: detectai_vite
-    depends_on:
-      - fastapi
-    image: detectai_vite_image:latest
-    ports:
-      - 8305:8305
-    env_file:
-      - ../.env
+    vite:
+      container_name: detectai_vite
+      depends_on:
+        - fastapi
+      image: detectai_vite_image:latest
+      ports:
+        - 8305:8305
+      env_file:
+        - ../.env
 
-  postgres:
-    container_name: detectai_postgres
-    image: postgres:latest
-    ports:
-      - 5433:5433
-    volumes:
-      - ./pgdata:/var/lib/postgresql/data
-    env_file:
-      - ../.env
-    environment:
-      - PGPORT=5433
-      - POSTGRES_DB=detectai
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+    postgres:
+      container_name: detectai_postgres
+      image: postgres:latest
+      ports:
+        - 5433:5433
+      volumes:
+        - ./pgdata:/var/lib/postgresql/data
+      env_file:
+        - ../.env
+      environment:
+        - PGPORT=5433
+        - POSTGRES_DB=detectai
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
 
-volumes:
-  pgdata:
+  volumes:
+    pgdata:
+    models:
+    audios:

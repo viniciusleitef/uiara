@@ -4,10 +4,16 @@ WORKDIR /app
 
 COPY ./vite/package.json ./package.json
 
-RUN npm install
+RUN npm i
 
 COPY ./vite /app
 
+COPY ./docker/entrypoint_vite.sh /app/
+
+RUN apk add --no-cache dos2unix && dos2unix /app/entrypoint_vite.sh
+
+RUN chmod +x /app/entrypoint_vite.sh
+
 EXPOSE 8305
 
-CMD ["sh", "-c", "npm run build && npm run preview"]
+CMD [ "sh", "/app/entrypoint_vite.sh" ]

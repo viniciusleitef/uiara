@@ -5,7 +5,8 @@ process.env = { ...process.env, ...loadEnv("production", process.cwd()) };
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-  ],
+  plugins: [react()],
+  preview: {
+    allowedHosts: ["uiara.tre-pb.jus.br"], // Permite acesso a esse domínio
+  }
 })
